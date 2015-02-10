@@ -6,15 +6,43 @@
   <name>DefianceCommons</name>
   <description>The commons library for DCV4 using Bukkit</description>
   <build>
-    <sourceDirectory>src</sourceDirectory>
+  	<finalName>DefianceCommons</finalName>
+  	<defaultGoal>clean install</defaultGoal>
+  	<resources>
+  	  <resource>
+  	    <targetPath>.</targetPath>
+  	  	<directory>${basedir}/src/main/resources</directory>
+  	  </resource>
+  	</resources>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source/>
-          <target/>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <excludes>
+                  <exclude>org.bukkit:bukkit</exclude>
+                  <exclude>org.spigotmc:spigot</exclude>
+                </excludes>
+              </artifactSet>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -33,16 +61,24 @@
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
       <version>1.8-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
       <version>1.8-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.archeinteractive</groupId>
       <artifactId>DefianceTools</artifactId>
       <version>0.0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>2.12.0</version>
     </dependency>
   </dependencies>
 </project>
