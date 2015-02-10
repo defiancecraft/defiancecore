@@ -5,8 +5,12 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.bson.types.ObjectId;
+import org.bukkit.Bukkit;
 
 import com.archeinteractive.defiancetools.util.JsonConfig;
 import com.defiancecraft.defiancecommons.DefianceCommons;
@@ -22,10 +26,13 @@ import com.mongodb.ServerAddress;
 
 public class Database {
 
+	private static final int EXEC_SERVICE_TIMEOUT = 30;
+	
 	private static DatabaseConfig config;
 	private static MongoClient client;
 	private static DB db;
 	private static Map<Class<? extends Collection>, Collection> collections = new HashMap<Class<? extends Collection>, Collection>();
+	private static ExecutorService execService;
 	
 	/**
 	 * Initializes the configuration and DB connection
@@ -174,12 +181,39 @@ public class Database {
 		
 	}
 	
+	public static ExecutorService getExecutorService() {
+		
+		if (Database.execService == null)
+			Database.execService = Executors.newFixedThreadPool(config.threads);
+		
+		return Database.execService;
+		
+	}
+	
+	public static void shutdownExecutorService() {
+		
+		if (Database.execService == null)
+			return;
+			
+		Database.execService.shutdown();
+		try {
+			if (!Database.execService.awaitTermination(EXEC_SERVICE_TIMEOUT, TimeUnit.SECONDS)) {
+				
+				Bukkit.getLogger().warning("Executor service failed to shutdown gracefully");
+				Bukkit.getLogger().warning("Shutting down threads forcefully; data loss could occur.");
+				int dropped = Database.execService.shutdownNow().size();
+				Bukkit.getLogger().warning(String.format("%d threads were dropped in forceful shutdown.", dropped));
+				
+			}
+		} catch (InterruptedException e) {}
+		
+	}
+	
 	// Register collections
 	static {
 		
 		Database.registerCollection(new Servers());
 		
 	}
-	//public static ExecutorService
 	
 }

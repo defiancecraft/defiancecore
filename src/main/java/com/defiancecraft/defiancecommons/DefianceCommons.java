@@ -29,4 +29,10 @@ public class DefianceCommons extends JavaPlugin {
 		
 	}
 	
+	public void onDisable() {
+		
+		Database.shutdownExecutorService();
+		
+	}
+	
 }

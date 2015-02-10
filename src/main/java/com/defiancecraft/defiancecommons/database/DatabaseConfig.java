@@ -11,6 +11,7 @@ public class DatabaseConfig extends JsonConfig {
 	public String serverId = "0102030405060708090a0b0c";
 	
 	public int port = 27017;
+	public int threads = 10;
 	
 	public boolean usesAuth = false;
 	
