@@ -1,3 +1,4 @@
 name: DefianceCommons
 main: com.defiancecraft.defiancecommons.DefianceCommons
 version: 0.0.1
+depend: [DefianceTools]
