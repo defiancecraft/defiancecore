@@ -3,11 +3,15 @@ package com.defiancecraft.defiancecommons.database;
 import java.io.File;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bson.types.ObjectId;
 
 import com.archeinteractive.defiancetools.util.JsonConfig;
 import com.defiancecraft.defiancecommons.DefianceCommons;
+import com.defiancecraft.defiancecommons.database.collections.Collection;
+import com.defiancecraft.defiancecommons.database.collections.Servers;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBObject;
@@ -21,6 +25,7 @@ public class Database {
 	private static DatabaseConfig config;
 	private static MongoClient client;
 	private static DB db;
+	private static Map<Class<? extends Collection>, Collection> collections = new HashMap<Class<? extends Collection>, Collection>();
 	
 	/**
 	 * Initializes the configuration and DB connection
@@ -77,6 +82,18 @@ public class Database {
 	}
 	
 	/**
+	 * Gets the primary DB as specified in
+	 * the configuration
+	 * 
+	 * @return A DB object, or null if Database was not initialized.
+	 */
+	public static DB getDB() {
+		
+		return db;
+		
+	}
+	
+	/**
 	 * Establishes a connection with the database, closing
 	 * exiting ones if necessary.
 	 * 
@@ -127,6 +144,40 @@ public class Database {
 	public static MongoClient getClient() {
 		
 		return client;
+		
+	}
+	
+	/**
+	 * Registers a collection so that it can be
+	 * retrieved using getCollection
+	 * 
+	 * @param c The collection instance to register
+	 * @see Database#getCollection(Class<? extends Collection>)
+	 */
+	public static void registerCollection(Collection c) {
+		
+		collections.put(c.getClass(), c);
+		
+	}
+	
+	/**
+	 * Gets a collection from the registered
+	 * collections map
+	 * 
+	 * @param clazz The class of the collection
+	 * @return A collection of type T
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends Collection> T getCollection(Class<T> clazz) {
+		
+		return (T) collections.get(clazz);
+		
+	}
+	
+	// Register collections
+	static {
+		
+		Database.registerCollection(new Servers());
 		
 	}
 	//public static ExecutorService

@@ -7,7 +7,7 @@ import com.defiancecraft.defiancecommons.database.Database;
 public class DefianceCommons extends JavaPlugin {
 
 	public void onEnable() {
-
+		
 		try {
 			
 			Database.init(this);
