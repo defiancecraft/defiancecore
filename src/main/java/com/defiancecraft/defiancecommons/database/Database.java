@@ -1,6 +1,5 @@
 package com.defiancecraft.defiancecommons.database;
 
-import java.io.File;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +15,8 @@ import com.archeinteractive.defiancetools.util.JsonConfig;
 import com.defiancecraft.defiancecommons.DefianceCommons;
 import com.defiancecraft.defiancecommons.database.collections.Collection;
 import com.defiancecraft.defiancecommons.database.collections.Servers;
+import com.defiancecraft.defiancecommons.database.collections.Users;
+import com.defiancecraft.defiancecommons.util.FileUtils;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBObject;
@@ -44,7 +45,7 @@ public class Database {
 		if (Database.config != null)
 			return;
 		
-		Database.config = JsonConfig.load(new File(p.getDataFolder(), "db.json"), DatabaseConfig.class);
+		Database.config = JsonConfig.load(FileUtils.getSharedConfig("db.json"), DatabaseConfig.class);
 		reconnect();
 		
 	}
@@ -181,6 +182,13 @@ public class Database {
 		
 	}
 	
+	/**
+	 * Gets an ExecutorService instance, or
+	 * creates one if necessary with thread pool
+	 * size of config.threads
+	 * 
+	 * @return ExecutorService
+	 */
 	public static ExecutorService getExecutorService() {
 		
 		if (Database.execService == null)
@@ -190,6 +198,11 @@ public class Database {
 		
 	}
 	
+	/**
+	 * Shuts down the ExecutorService; attempts to
+	 * do it gracefully, and if that fails, it'll
+	 * force shutdown.
+	 */
 	public static void shutdownExecutorService() {
 		
 		if (Database.execService == null)
@@ -213,6 +226,7 @@ public class Database {
 	static {
 		
 		Database.registerCollection(new Servers());
+		Database.registerCollection(new Users());
 		
 	}
 	
