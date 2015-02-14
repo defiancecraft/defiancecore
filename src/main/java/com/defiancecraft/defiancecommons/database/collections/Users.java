@@ -79,6 +79,7 @@ public class Users extends Collection {
 		final DBUser newUser = user;
 		
 		if (!creating.contains(uuid)) {
+			creating.add(uuid);
 			Database.getExecutorService().submit(() -> {
 				this.save(newUser);
 				this.creating.remove(uuid);
@@ -86,6 +87,24 @@ public class Users extends Collection {
 		}
 		
 		return user;
+		
+	}
+	
+	/**
+	 * Saves a user to the database, replacing
+	 * users with the same UUIID.
+	 * 
+	 * @param user User to save
+	 */
+	public void createUser(DBUser user) {
+		
+		DBUser existing = getByUUID(user.getUUID());
+		if (existing != null)
+			user.setId(existing.getId());
+		
+		Database.getExecutorService().submit(() -> {
+			this.save(user);
+		});
 		
 	}
 
