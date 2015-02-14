@@ -6,6 +6,8 @@ public class DBServer extends Document {
 
 	// Fields
 	public static final String FIELD_NAME = "name";
+	public static final String FIELD_IP = "ip";
+	public static final String FIELD_PORT = "port";
 	public static final String FIELD_GAMEMODE = "gamemode";
 	public static final String FIELD_ONLINE = "online";
 	public static final String FIELD_MAP = "map";
@@ -39,6 +41,14 @@ public class DBServer extends Document {
 	
 	public int getOverflowSlots() {
 		return getInt(FIELD_OVERFLOW_SLOTS);
+	}
+
+	public String getIP() {
+		return getString(FIELD_IP);
+	}
+	
+	public int getPort() {
+		return getInt(FIELD_PORT);
 	}
 	
 	public String getState() {
