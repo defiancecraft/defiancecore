@@ -1,6 +1,7 @@
 package com.defiancecraft.defiancecommons.database.documents;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -29,6 +30,16 @@ public class Document {
 	}
 	
 	/**
+	 * Sets the _id field of this Document
+	 * @param id ID to set to
+	 */
+	public void setId(ObjectId id) {
+		
+		this.dbo.put(FIELD_ID, id);
+		
+	}
+	
+	/**
 	 * Gets the DBObject associated with 
 	 * this document.
 	 * @return DBObject
@@ -40,10 +51,10 @@ public class Document {
 	}
 	
 	/**
-	 * Shortcut for getString(String, String), with
+	 * Shortcut for {@link #getString(String, String)}, with
 	 * default as null
 	 * 
-	 * @see Document#getString(String, String)
+	 * @see #getString(String, String)
 	 */
 	protected String getString(String field) {
 		
@@ -72,10 +83,10 @@ public class Document {
 	}
 	
 	/**
-	 * Shortcut for getInt(String, int), with
+	 * Shortcut for {@link #getInt(String, int)}, with
 	 * default as 0
 	 * 
-	 * @see Document#getInt(String, int)
+	 * @see #getInt(String, int)
 	 */
 	protected Integer getInt(String field) {
 		
@@ -110,10 +121,10 @@ public class Document {
 	}
 	
 	/**
-	 * Shortcut for getBoolean(String, boolean), with
+	 * Shortcut for {@link #getBoolean(String, boolean)}, with
 	 * default as false
 	 * 
-	 * @see Document#getBoolean(String, boolean)
+	 * @see #getBoolean(String, boolean)
 	 */
 	protected Boolean getBoolean(String field) {
 		
@@ -127,7 +138,7 @@ public class Document {
 	 * 
 	 * @param field Field to get
 	 * @param def Default value
-	 * @return THe boolean, or `def` on failure
+	 * @return The boolean, or `def` on failure
 	 */
 	protected Boolean getBoolean(String field, boolean def) {
 		
@@ -145,10 +156,10 @@ public class Document {
 	}
 	
 	/**
-	 * Shortcut for getObjectId(String, ObjectId), with
+	 * Shortcut for {@link #getObjectId(String, ObjectId)}, with
 	 * default as null.
 	 * 
-	 * @see Document#getObjectId(String, ObjectId)
+	 * @see #getObjectId(String, ObjectId)
 	 */
 	protected ObjectId getObjectId(String field) {
 		
@@ -181,10 +192,10 @@ public class Document {
 	}
 
 	/**
-	 * Shortcut for getStringList(String, List\<String\>), with
+	 * Shortcut for {@link #getStringList(String, List)}, with
 	 * default as null.
 	 * 
-	 * @see Document#getStringList(String, List)
+	 * @see #getStringList(String, List)
 	 */
 	protected List<String> getStringList(String field) {
 		
@@ -197,7 +208,7 @@ public class Document {
 	 * 
 	 * @param field Field to get
 	 * @param def Default value if field is null
-	 * @return List\<String\>, or `def` on failure
+	 * @return List<String>, or `def` on failure
 	 */
 	protected List<String> getStringList(String field, List<String> def) {
 		
@@ -211,6 +222,36 @@ public class Document {
 			list.add(o.toString());
 			
 		return list;
+		
+	}
+	
+	/**
+	 * Shortcut for {@link #getDate(String, Date)}, with
+	 * default as null.
+	 * 
+	 * @see #getDate(String, Date)
+	 */
+	protected Date getDate(String field) {
+		
+		return getDate(field, null);
+		
+	}
+	
+	/**
+	 * Retrieves a Date object from the DBObject
+	 * 
+	 * @param field Field to get
+	 * @param def Default value if field is null
+	 * @return Date, or `def` on failure
+	 */
+	protected Date getDate(String field, Date def) {
+		
+		Object obj = dbo.get(field);
+		
+		if (obj != null && obj instanceof Date)
+			return (Date)obj;
+		
+		return def;
 		
 	}
 	
