@@ -1,12 +1,24 @@
 package com.defiancecraft.defiancecommons;
 
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.archeinteractive.defiancetools.util.command.CommandRegistry;
+import com.defiancecraft.defiancecommons.commands.PermissionCommands;
 import com.defiancecraft.defiancecommons.database.Database;
+import com.defiancecraft.defiancecommons.listeners.ChatListener;
+import com.defiancecraft.defiancecommons.listeners.PermissionListener;
+import com.defiancecraft.defiancecommons.permissions.PermissionManager;
 
 public class DefianceCommons extends JavaPlugin {
 
+	private static PermissionManager manager;
+	
 	public void onEnable() {
+		
+		/*
+		 * Setup Database
+		 */
 		
 		try {
 			
@@ -21,17 +33,60 @@ public class DefianceCommons extends JavaPlugin {
 			getLogger().severe("=   connecting to the database.  =");
 			getLogger().severe("=      Shutting down server.     =");
 			getLogger().severe("==================================");
+			getLogger().severe("Message: " + e.getMessage());
+			getLogger().severe("Exception Type: " + e.getClass().getCanonicalName());
 			
-			e.printStackTrace();
 			getServer().shutdown();
+			return;
 			
 		}
 		
+		/*
+		 * Setup permissions
+		 */
+		
+		DefianceCommons.manager = new PermissionManager(this);
+		//DefianceCommons.manager.reload(); // TODO: reload method
+		
+		/*
+		 * Register event listeners (for permissions) 
+		 */
+		
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvents(new PermissionListener(DefianceCommons.manager), this);
+		pm.registerEvents(new ChatListener(DefianceCommons.manager), this);
+		
+		/*
+		 * Register commands
+		 */
+		
+		this.registerCommands();
+	
 	}
 	
 	public void onDisable() {
+
+		// Remove all PermissionAttachments
+		manager.removeAllAttachments();
 		
+		// Shutdown ExecutorService
 		Database.shutdownExecutorService();
+		
+	}
+	
+	private void registerCommands() {
+		
+		CommandRegistry.registerUniversalCommand(this, "perm", "defiancecraft.perm.help", PermissionCommands::help);
+		CommandRegistry.registerUniversalSubCommand("perm", "addgroup", "defiancecraft.perm.addgroup", PermissionCommands::addGroup);
+		
+		// TODO: Rest of these
+		//CommandRegistry.registerUniversalSubCommand("perm", "remgroup", "defiancecraft.perm.remgroup", PermissionCommands::remGroup);
+		
+	}
+	
+	public static PermissionManager getPermissionManager() {
+		
+		return manager;
 		
 	}
 	
