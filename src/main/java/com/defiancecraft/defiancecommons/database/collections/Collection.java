@@ -5,6 +5,7 @@ import com.defiancecraft.defiancecommons.database.documents.Document;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.WriteResult;
 
 public abstract class Collection {
 
@@ -59,6 +60,19 @@ public abstract class Collection {
 		
 		DBObject obj = doc.getDBO();
 		getDBC().save(obj);
+		
+	}
+	
+	/**
+	 * Performs an update operation
+	 * 
+	 * @param query Query for document to update
+	 * @param data Update data
+	 * @return WriteResult
+	 */
+	public WriteResult update(DBObject query, DBObject data) {
+		
+		return getDBC().update(query, data);
 		
 	}
 	
