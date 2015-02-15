@@ -140,8 +140,21 @@ public class UUIDUtils {
 		
 	}
 	
+	/**
+	 * A class representing a response from
+	 * Mojang for a UUID request.
+	 */
 	public class UUIDResponse {
+		
 		public String id, name, error, errorMessage;
+		
+		/**
+		 * Gets the UUID
+		 * @return UUID
+		 */
+		public UUID getUUID() {
+			return UUIDUtils.toUUID(id);
+		}
 	}
 	
 }
