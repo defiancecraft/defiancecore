@@ -10,7 +10,7 @@ import com.mongodb.DBObject;
 
 public class Document {
 
-	private static final String FIELD_ID = "_id";
+	public static final String FIELD_ID = "_id";
 	protected DBObject dbo;
 	
 	public Document(DBObject obj) {
