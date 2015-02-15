@@ -1,27 +1,55 @@
 package com.defiancecraft.defiancecommons.commands;
 
+import java.util.IllegalFormatException;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.defiancecraft.defiancecommons.DefianceCommons;
+import com.defiancecraft.defiancecommons.api.User;
 import com.defiancecraft.defiancecommons.database.Database;
-import com.defiancecraft.defiancecommons.database.collections.Users;
-import com.defiancecraft.defiancecommons.database.documents.DBUser;
+import com.defiancecraft.defiancecommons.permissions.PermissionManager;
 import com.defiancecraft.defiancecommons.util.RegexUtils;
-import com.defiancecraft.defiancecommons.util.UUIDUtils;
-import com.defiancecraft.defiancecommons.util.UUIDUtils.UUIDResponse;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.mongodb.WriteResult;
 
 public class PermissionCommands {
 
 	// <user> <group> Pattern
 	private static final Pattern PAT_USERGROUP = Pattern.compile("^([a-zA-Z0-9_]{1,16}) ([^ ]+)$");
+	
+	/**
+	 * Convenice method to attempt to send a
+	 * message to UUID `u`. This will work if
+	 * `u` isn't null, and the player with that
+	 * UUID is online. Colour codes will also
+	 * be translated from ampersands (&).
+	 * 
+	 * @param u UUID of Player - can be null
+	 * @param msg Message to send, can be String.format compatible
+	 * @param log Whether to log to the console
+	 * @param formatArguments Any arguments to pass to String.format; optional
+	 */
+	private static void trySend(UUID u, String msg, boolean log, Object... formatArguments) {
+
+		// Format & translate colour codes
+		try {
+			msg = String.format(msg, formatArguments);
+		} catch (IllegalFormatException e) {}
+		
+		msg = ChatColor.translateAlternateColorCodes('&', msg);
+		
+		// Send message if player is online
+		if (u != null && Bukkit.getPlayer(u) != null)
+			Bukkit.getPlayer(u).sendMessage(msg);
+		
+		if (log)
+			Bukkit.getLogger().info(ChatColor.stripColor(msg));
+		
+	}
 	
 	public static boolean help(CommandSender sender, String[] args) {
 		
@@ -61,63 +89,27 @@ public class PermissionCommands {
 		
 		Database.getExecutorService().submit(() -> {
 			
-			Users users = Database.getCollection(Users.class);
-			DBObject pushValue = new BasicDBObject(DBUser.FIELD_GROUPS, group);
-			
-			// Try and update the user
-			WriteResult result = users.update(
-				new BasicDBObject(DBUser.FIELD_NAME, user), // Update where name == `user`
-				new BasicDBObject("$addToSet", pushValue) // Push `group` onto FIELD_GROUPS if it doesn't exist.
-			);
-			
-			// If there were no documents updated,
-			// get their UUID from Mojang, and attempt
-			// to update again, but by UUID. If this fails,
-			// just make a new user with that group.
-			if (result.getN() == 0) {
-
-				// Get UUID from Mojang
-				UUIDResponse uuidInfo = UUIDUtils.getUUID(user, System.currentTimeMillis() / 1000);
-				
-				if (uuidInfo == null 
-						|| uuidInfo.name == null
-						|| uuidInfo.name.isEmpty()
-						|| uuidInfo.id == null
-						|| uuidInfo.id.isEmpty()) {
-					Bukkit.getLogger().severe("Failed to find a user with username '" + user + "'. Could not add group '" + group + "' to them as UUID was not found.");
-					if (senderUUID != null)
-						if (Bukkit.getPlayer(senderUUID) != null)
-							Bukkit.getPlayer(senderUUID).sendMessage("§cFailed to add group. User does not exist.");
-					return;
-				}
-				
-				UUID uuid = UUIDUtils.toUUID(uuidInfo.id);
-				
-				// Try and update again, with UUID this time
-				result = users.update(
-					new BasicDBObject(DBUser.FIELD_UUID, uuid.toString()), // Update where uuid == `uuid`
-					new BasicDBObject("$addToSet", pushValue) // Push `group` onto FIELD_GROUPS
-				);
-				
-				// Create if update failed
-				if (result.getN() == 0) {
-					
-					DBUser newUser = new DBUser(uuid, uuidInfo.name);
-					newUser.addGroup(group);
-					users.save(newUser);
-					
-				}
-				
+			User u = User.findByName(user);
+			if (u == null) {
+				trySend(senderUUID, "&cCould not find user with name '%s'", true, user);
+				return;
 			}
 			
-			// Send success message if succeeded.
-			if (senderUUID != null) {
-				if (Bukkit.getPlayer(senderUUID) != null)
-					Bukkit.getPlayer(senderUUID).sendMessage(String.format("§aAdded group '%s' to '%s'", group, user));
-			} else {
-				Bukkit.getLogger().info(String.format("Added group '%s' to '%s'", group, user));
+			boolean added = u.addGroup(group);
+			if (!added) {
+				trySend(senderUUID, "&cCould not add group to user; database error", true);
+				return;
 			}
-					
+			
+			// Update player's perms if they are online
+			Player target = Bukkit.getPlayer(u.getDBU().getUUID());
+			PermissionManager pm = DefianceCommons.getPermissionManager();
+			
+			if (target != null)
+				pm.updatePlayer(target);
+				
+			trySend(senderUUID, "&aSuccessfully added group '%s' to user '%s'.", true, group, user);
+			
 		});
 		
 		sender.sendMessage("Adding group...");
@@ -140,12 +132,7 @@ public class PermissionCommands {
 			
 		Database.getExecutorService().submit(() -> {
 			
-			Users users = Database.getCollection(Users.class);
-			DBUser dbu = users.getByName(user);
-			
-			if (dbu == null) {
-				// TODO
-			}
+			// TODO
 			
 		});
 		
