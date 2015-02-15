@@ -76,4 +76,17 @@ public abstract class Collection {
 		
 	}
 	
+	/**
+	 * Performs an update operation with multi set to true
+	 * 
+	 * @param query Query for document to update
+	 * @param data Update data
+	 * @return WriteResult
+	 */
+	public WriteResult updateMulti(DBObject query, DBObject data) {
+		
+		return getDBC().updateMulti(query, data);
+		
+	}
+	
 }
