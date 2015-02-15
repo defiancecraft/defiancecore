@@ -33,6 +33,14 @@ public class PermissionConfig extends JsonConfig {
 			this.priority = priority;
 		}
 		
+		public List<String> getInherit() {
+			return inherit != null ? inherit : new ArrayList<String>();
+		}
+		
+		public List<String> getPermissions() {
+			return permissions != null ? permissions : new ArrayList<String>();
+		}
+		
 	}
 	
 	/**
@@ -90,13 +98,11 @@ public class PermissionConfig extends JsonConfig {
 		
 		// Iterate over inherited groups and recursively
 		// add permissions
-		if (g.inherit != null) {
-			for (String group : g.inherit)
-				if ((temp = getGroup(group)) != null)
-					perms.addAll(getPermissions(temp));
-		}
+		for (String group : g.getInherit())
+			if ((temp = getGroup(group)) != null)
+				perms.addAll(getPermissions(temp));
 		
-		for (String perm : g.permissions)
+		for (String perm : g.getPermissions())
 			perms.add(perm);
 		
 		return perms;
