@@ -1,5 +1,7 @@
 package com.defiancecraft.defiancecommons.api;
 
+import java.util.UUID;
+
 import org.bson.types.ObjectId;
 
 import com.defiancecraft.defiancecommons.database.Database;
@@ -61,6 +63,24 @@ public class User {
 	}
 	
 	/**
+	 * Removes a group from this user by performing an update
+	 * on the database. Will return false if no users matched
+	 * the query (queries by ID of the user's DBUser)
+	 * 
+	 * @param group The group to remove
+	 * @return Whether the group was removed
+	 */
+	public boolean removeGroup(String group) {
+		
+		ObjectId id = dbu.getId();
+		DBObject query = new BasicDBObject(DBUser.FIELD_ID, id);
+		DBObject data  = new BasicDBObject("$pull", new BasicDBObject(DBUser.FIELD_GROUPS, group));
+		
+		return Database.getCollection(Users.class).updateMulti(query, data).getN() > 0;
+		
+	}
+	
+	/**
 	 * Finds a user by their name, checking database first,
 	 * then resorting to UUID lookup (via Mojang), and then
 	 * just creating the user, if they are still not found.
@@ -72,7 +92,7 @@ public class User {
 	 * @return User object representing found user, or null
 	 * 		   if their username could not be resolved.
 	 */
-	public static User findByName(String name) {
+	public static User findByNameOrCreate(String name) {
 		
 		Users users = Database.getCollection(Users.class);
 		
@@ -102,6 +122,58 @@ public class User {
 		user = new DBUser(uuidRes.getUUID(), name);
 		users.createUser(user);
 		return new User(user);
+		
+	}
+	
+	/**
+	 * Finds a user by their name, checking database first,
+	 * then resorting to UUID lookup (via Mojang). This method
+	 * will not create the user if they are not found at this
+	 * point, unlike {@link #findByNameOrCreate(String)}, but
+	 * rather return null.
+	 * 
+	 * @param name Name of user to lookup
+	 * @return User object, or null
+	 */
+	public static User findByName(String name) {
+		
+		Users users = Database.getCollection(Users.class);
+		
+		// Plan A: Try and find them by name
+		DBUser user = users.getByName(name);
+		
+		if (user != null)
+			return new User(user);
+		
+		// Get their UUID from Mojang, or return null
+		// if it wasn't found or some other error
+		// (see UUIDUtils#getUUID(String, long))
+		UUIDResponse uuidRes = UUIDUtils.getUUID(name, System.currentTimeMillis() / 1000);
+		if (uuidRes == null
+				|| uuidRes.name == null
+				|| uuidRes.name.isEmpty()
+				|| uuidRes.id == null
+				|| uuidRes.id.isEmpty())
+			return null;
+		
+		// Plan B: Try and find them by their UUID
+		return User.findByUUID(uuidRes.getUUID());
+		
+	}
+	
+	/**
+	 * Attempts to find a user by their UUID, returning
+	 * null if they were not found in the DB.
+	 * 
+	 * @param uuid UUID of user to find
+	 * @return User object, or null
+	 */
+	public static User findByUUID(UUID uuid) {
+		
+		Users users = Database.getCollection(Users.class);
+		DBUser user = users.getByUUID(uuid);
+		
+		return user != null ? new User(user) : null;
 		
 	}
 	
