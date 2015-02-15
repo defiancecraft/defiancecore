@@ -90,9 +90,11 @@ public class PermissionConfig extends JsonConfig {
 		
 		// Iterate over inherited groups and recursively
 		// add permissions
-		for (String group : g.inherit)
-			if ((temp = getGroup(group)) != null)
-				perms.addAll(getPermissions(temp));
+		if (g.inherit != null) {
+			for (String group : g.inherit)
+				if ((temp = getGroup(group)) != null)
+					perms.addAll(getPermissions(temp));
+		}
 		
 		for (String perm : g.permissions)
 			perms.add(perm);
