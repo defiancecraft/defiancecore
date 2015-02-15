@@ -178,9 +178,13 @@ public class PermissionCommands {
 	 */
 	public static boolean reload(CommandSender sender, String[] args) {
 	
+		sender.sendMessage(ChatColor.GRAY + "Reloading permissions...");
+		
 		PermissionManager pm = DefianceCommons.getPermissionManager();
 		pm.reloadConfig();
 		pm.reload();
+		
+		sender.sendMessage(ChatColor.GREEN + "Reloaded permissions from file and database.");
 		
 		return true;
 		
