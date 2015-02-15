@@ -253,16 +253,16 @@ public class PermissionManager {
 	}
 	
 	/**
-	 * Updates a player's metadata, querying the
-	 * database for the user first. Should be used
-	 * when, for example, a player's rank changes.
+	 * Updates a player's metadata, querying the database
+	 * for the user first. Should not be used when, for example,
+	 * a player's rank changes, use {@link #updatePlayer(Player)}
+	 * for that.
 	 * 
+	 * This method should be used, for example, if a player's
+	 * metadata is null, and needs updating.
+	 *
 	 * @param player Player to update metadata of
-	 * @deprecated Unless wanting only to update the metadata, 
-	 * (this should never be the case), the {@link #updatePlayer(Player)}
-	 * method should be used instead, to avoid multiple DB queries.
 	 */
-	@Deprecated
 	public void updateMetadata(Player player) {
 		
 		DBUser user = Database

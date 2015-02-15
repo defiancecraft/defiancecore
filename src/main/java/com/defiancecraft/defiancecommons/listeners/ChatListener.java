@@ -23,7 +23,6 @@ public class ChatListener implements Listener {
 		if (e.isCancelled())
 			return;
 		
-		// TODO commands
 		Player player = e.getPlayer();
 		PermissionMetadata meta = pm.getMetadata(player);
 		
