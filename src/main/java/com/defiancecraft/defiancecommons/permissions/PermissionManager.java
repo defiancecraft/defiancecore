@@ -112,47 +112,12 @@ public class PermissionManager {
 	}
 	
 	/**
-	 * Sets the permissions on the PermissionAttachment
-	 * for a player, retrieving their groups from database
-	 * 
-	 * @param player Player to set permissions of
-	 */
-	public void setPermissions(Player player) {
-		
-		Users users = Database.getCollection(Users.class);
-		DBUser user = users.getUserOrCreate(player);
-		
-		PermissionAttachment attachment = setAttachment(player);
-		
-		// Clear current permissions from attachment
-		for (String permission : attachment.getPermissions().keySet())
-			attachment.unsetPermission(permission);
-		
-		for (Group g : config.getGroupsByPriority(true)) {
-			
-			// We'll probably want to skip if the
-			// user doesn't have this group...
-			if (!user.getGroups().contains(g.name))
-				continue;
-
-			// Get ALL permissions for group (i.e.
-			// inherited ones too)
-			for (String perm : config.getPermissions(g))
-				attachment.setPermission(perm.replace("^", ""), perm.contains("^") ? false : true);
-			
-		}
-		
-		player.recalculatePermissions();
-		
-	}
-	
-	/**
 	 * Gets the prefix and suffix of a user
 	 * 
 	 * @param user User to get prefix & suffix of
 	 * @return Array of two strings: [prefix, suffix]
 	 */
-	public String[] getPrefixAndSuffix(DBUser user) {
+	private String[] getPrefixAndSuffix(DBUser user) {
 		
 		List<Group> groups = config.getGroupsByPriority(true);
 		String prefix = "",
@@ -200,28 +165,6 @@ public class PermissionManager {
 	}
 	
 	/**
-	 * Updates a player's metadata from the
-	 * database. Should be called, for example,
-	 * when a player's rank changes.
-	 * 
-	 * @param p Player to update metadata of
-	 */
-	public void updateMetadata(Player p) {
-		
-		DBUser user = Database
-				.getCollection(Users.class)
-				.getUserOrCreate(p);
-		
-		// Create PermissionMetadata from the prefix
-		// and suffix of the user
-		String[] data = getPrefixAndSuffix(user);
-		PermissionMetadata meta = new PermissionMetadata(data[0], data[1]);
-		
-		setMetadata(p, meta);
-		
-	}
-	
-	/**
 	 * Sets a player's metadata (i.e. their prefix & suffix)
 	 * 
 	 * @param p Player to set metadata of
@@ -250,6 +193,127 @@ public class PermissionManager {
 			   return PermissionMetadata.deserialize(p.getMetadata(METADATA_KEY).get(0).asString());
 			  
 		return null;
+		
+	}
+	
+	/**
+	 * Sets the permissions on the PermissionAttachment
+	 * for a player, querying the database for their groups
+	 * or creating a player if necessary.
+	 * 
+	 * @param player Player to set permissions of
+	 * @deprecated Unless wanting only to update the
+	 * permissions of a player and not metadata, the {@link #updatePlayer(Player)}
+	 * method should be used instead to avoid multiple DB
+	 * queries.
+	 */
+	@Deprecated
+	public void updatePermissions(Player player) {
+		
+		Users users = Database.getCollection(Users.class);
+		DBUser user = users.getUserOrCreate(player);
+		
+		updatePermissions(player, user);
+		
+	}
+
+	/**
+	 * Sets the permissions on the PermissionAttachment
+	 * for a player using an existing DBUser object.
+	 * This method should be used to avoid frequent DB
+	 * queries.
+	 * 
+	 * @param player Player to set permissions of
+	 * @param user DBUser object for player
+	 */
+	public void updatePermissions(Player player, DBUser user) {
+		
+		PermissionAttachment attachment = setAttachment(player);
+		
+		// Clear current permissions from attachment
+		for (String permission : attachment.getPermissions().keySet())
+			attachment.unsetPermission(permission);
+		
+		for (Group g : config.getGroupsByPriority(true)) {
+			
+			// We'll probably want to skip if the
+			// user doesn't have this group...
+			if (!user.getGroups().contains(g.name))
+				continue;
+
+			// Get ALL permissions for group (i.e.
+			// inherited ones too)
+			for (String perm : config.getPermissions(g))
+				attachment.setPermission(perm.replace("^", ""), perm.contains("^") ? false : true);
+			
+		}
+		
+		player.recalculatePermissions();
+		
+	}
+	
+	/**
+	 * Updates a player's metadata, querying the
+	 * database for the user first. Should be used
+	 * when, for example, a player's rank changes.
+	 * 
+	 * @param player Player to update metadata of
+	 * @deprecated Unless wanting only to update the metadata, 
+	 * (this should never be the case), the {@link #updatePlayer(Player)}
+	 * method should be used instead, to avoid multiple DB queries.
+	 */
+	@Deprecated
+	public void updateMetadata(Player player) {
+		
+		DBUser user = Database
+				.getCollection(Users.class)
+				.getUserOrCreate(player);
+		
+		updateMetadata(player, user);
+		
+	}
+	
+	/**
+	 * Updates a player's metadata using an existing
+	 * DBUser object. This method should be used to
+	 * avoid frequent DB queries.
+	 * 
+	 * @param player Player to update
+	 * @param user DBUser object to use
+	 */
+	public void updateMetadata(Player player, DBUser user) {
+		
+		// Create PermissionMetadata from the prefix
+		// and suffix of the user
+		String[] data = getPrefixAndSuffix(user);
+		PermissionMetadata meta = new PermissionMetadata(data[0], data[1]);
+		
+		setMetadata(player, meta);		
+		
+	}
+
+	/**
+	 * Updates the permissions and metadata for a player, using
+	 * a single database query. This should be used in favour of
+	 * {@link #updateMetadata(Player)} and {@link #updatePermissions(Player)}.
+	 * @param player Player to update
+	 */
+	public void updatePlayer(Player player) {
+		
+		DBUser user = Database.getCollection(Users.class).getUserOrCreate(player);
+		updatePermissions(player, user);
+		updateMetadata(player, user);
+		
+	}
+	
+	/**
+	 * Updates all players from the Database. Should be called
+	 * after a reload, or on enabling the plugin.
+	 */
+	public void reload() {
+		
+		for (Player p : Bukkit.getOnlinePlayers())
+			updatePlayer(p);
 		
 	}
 	

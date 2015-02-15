@@ -46,7 +46,7 @@ public class DefianceCommons extends JavaPlugin {
 		 */
 		
 		DefianceCommons.manager = new PermissionManager(this);
-		//DefianceCommons.manager.reload(); // TODO: reload method
+		DefianceCommons.manager.reload();
 		
 		/*
 		 * Register event listeners (for permissions) 
