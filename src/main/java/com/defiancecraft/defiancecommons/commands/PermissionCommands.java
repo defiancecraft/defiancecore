@@ -173,6 +173,20 @@ public class PermissionCommands {
 	}
 	
 	/*
+	 * Command:    /perm reload
+	 * Permission: defiancecraft.perm.reload
+	 */
+	public static boolean reload(CommandSender sender, String[] args) {
+	
+		PermissionManager pm = DefianceCommons.getPermissionManager();
+		pm.reloadConfig();
+		pm.reload();
+		
+		return true;
+		
+	}
+	
+	/*
 	public static boolean setUserPrefix(CommandSender sender, String[] args) {}
 	public static boolean setUserSuffix(CommandSender sender, String[] args) {}
 	

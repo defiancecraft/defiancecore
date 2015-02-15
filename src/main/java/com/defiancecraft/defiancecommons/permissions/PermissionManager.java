@@ -31,7 +31,7 @@ public class PermissionManager {
 	public PermissionManager(Plugin plugin) {
 		
 		this.plugin = plugin;
-		this.config = JsonConfig.load(FileUtils.getSharedConfig("permissions.json"), PermissionConfig.class);
+		reloadConfig();
 		
 	}
 	
@@ -314,6 +314,15 @@ public class PermissionManager {
 		
 		for (Player p : Bukkit.getOnlinePlayers())
 			updatePlayer(p);
+		
+	}
+	
+	/**
+	 * Reloads the configuration from file
+	 */
+	public void reloadConfig() {
+		
+		this.config = JsonConfig.load(FileUtils.getSharedConfig("permissions.json"), PermissionConfig.class);
 		
 	}
 	
