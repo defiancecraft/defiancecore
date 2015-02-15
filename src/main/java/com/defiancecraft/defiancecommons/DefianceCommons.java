@@ -78,6 +78,7 @@ public class DefianceCommons extends JavaPlugin {
 		
 		CommandRegistry.registerUniversalCommand(this, "perm", "defiancecraft.perm.help", PermissionCommands::help);
 		CommandRegistry.registerUniversalSubCommand("perm", "addgroup", "defiancecraft.perm.addgroup", PermissionCommands::addGroup);
+		CommandRegistry.registerUniversalSubCommand("perm", "remgroup", "defiancecraft.perm.remgroup", PermissionCommands::remGroup);
 		
 		// TODO: Rest of these
 		//CommandRegistry.registerUniversalSubCommand("perm", "remgroup", "defiancecraft.perm.remgroup", PermissionCommands::remGroup);

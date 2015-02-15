@@ -51,6 +51,10 @@ public class PermissionCommands {
 		
 	}
 	
+	/*
+	 * Command:    /perm
+	 * Permission: defiancecraft.perm.help
+	 */
 	public static boolean help(CommandSender sender, String[] args) {
 		
 		sender.sendMessage(
@@ -73,6 +77,10 @@ public class PermissionCommands {
 		
 	}
 	
+	/*
+	 * Command:    /perm addgroup <user> <group>
+	 * Permission: defiancecraft.perm.addgroup
+	 */
 	public static boolean addGroup(CommandSender sender, String[] args) {
 		
 		String arguments = String.join(" ", args);
@@ -89,7 +97,7 @@ public class PermissionCommands {
 		
 		Database.getExecutorService().submit(() -> {
 			
-			User u = User.findByName(user);
+			User u = User.findByNameOrCreate(user);
 			if (u == null) {
 				trySend(senderUUID, "&cCould not find user with name '%s'", true, user);
 				return;
@@ -117,6 +125,10 @@ public class PermissionCommands {
 		
 	}
 	
+	/*
+	 * Command:    /perm remgroup <user> <group>
+	 * Permission: defiancecraft.perm.remgroup
+	 */
 	public static boolean remGroup(CommandSender sender, String[] args) {
 		
 		String arguments = String.join(" ", args);
@@ -124,15 +136,35 @@ public class PermissionCommands {
 		
 		final String user  = RegexUtils.getGroup(1, matcher);
 		final String group = RegexUtils.getGroup(2, matcher);
+		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
 		
 		if (user.isEmpty() || group.isEmpty()) {
 			sender.sendMessage("Usage: /perm remgroup <user> <group>");
 			return true;
 		}
-			
+		
 		Database.getExecutorService().submit(() -> {
 			
-			// TODO
+			User u = User.findByName(user);
+			if (u == null) {
+				trySend(senderUUID, "&cCould not find user with name '%s'", true, user);
+				return;
+			}
+			
+			boolean success = u.removeGroup(group);
+			if (!success) {
+				trySend(senderUUID, "&cFailed to remove group '%s' from user '%s'", true, group, user);
+				return;
+			}
+			
+			// Update player's perms if they are online
+			Player target = Bukkit.getPlayer(u.getDBU().getUUID());
+			PermissionManager pm = DefianceCommons.getPermissionManager();
+			
+			if (target != null)
+				pm.updatePlayer(target);
+				
+			trySend(senderUUID, "&aSuccessfully removed group '%s' from user '%s'.", true, group, user);
 			
 		});
 		
@@ -141,7 +173,6 @@ public class PermissionCommands {
 	}
 	
 	/*
-	public static boolean remGroup(CommandSender sender, String[] args) {}
 	public static boolean setUserPrefix(CommandSender sender, String[] args) {}
 	public static boolean setUserSuffix(CommandSender sender, String[] args) {}
 	
