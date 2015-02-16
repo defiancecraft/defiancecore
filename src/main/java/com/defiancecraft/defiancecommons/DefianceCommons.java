@@ -84,6 +84,11 @@ public class DefianceCommons extends JavaPlugin {
 		CommandRegistry.registerUniversalSubCommand("perm", "setuserprefix", "defiancecraft.perm.setuserprefix", (sender, args) -> PermissionCommands.setUserMeta(sender, args, true));
 		CommandRegistry.registerUniversalSubCommand("perm", "setusersuffix", "defiancecraft.perm.setusersuffix", (sender, args) -> PermissionCommands.setUserMeta(sender, args, false));
 		CommandRegistry.registerUniversalSubCommand("perm", "creategroup", "defiancecraft.perm.creategroup", PermissionCommands::createGroup);
+		CommandRegistry.registerUniversalSubCommand("perm", "addperm", "defiancecraft.perm.addperm", PermissionCommands::addPerm);
+		CommandRegistry.registerUniversalSubCommand("perm", "remperm", "defiancecraft.perm.remperm", PermissionCommands::remPerm);
+		CommandRegistry.registerUniversalSubCommand("perm", "setgroupprefix", "defiancecraft.perm.setgroupprefix", (sender, args) -> PermissionCommands.setGroupMeta(sender, args, true));
+		CommandRegistry.registerUniversalSubCommand("perm", "setgroupsuffix", "defiancecraft.perm.setgroupsuffix", (sender, args) -> PermissionCommands.setGroupMeta(sender, args, false));
+		CommandRegistry.registerUniversalSubCommand("perm", "setpriority", "defiancecraft.perm.setpriority", PermissionCommands::setPriority);
 		
 	}
 	

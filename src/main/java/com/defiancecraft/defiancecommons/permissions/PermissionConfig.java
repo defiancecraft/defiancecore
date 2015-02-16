@@ -115,4 +115,114 @@ public class PermissionConfig extends JsonConfig {
 		
 	}
 	
+	/**
+	 * Adds a permission to a group
+	 * 
+	 * @param groupName Name of group
+	 * @param permission Permission to add
+	 * @return Whether the group was found
+	 */
+	public boolean addPermission(String groupName, String permission) {
+		
+		for (int i = 0; i < groups.size(); i++) {
+			Group g = groups.get(i);
+			if (g.name.equals(groupName)) {
+				g.permissions.add(permission);
+				groups.set(i, g);
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
+	
+	/**
+	 * Removes a permission from a group
+	 * 
+	 * @param groupName Name of group
+	 * @param permission Permission to remove
+	 * @return Whether the group was found
+	 */
+	public boolean removePermission(String groupName, String permission) {
+		
+		for (int i = 0; i < groups.size(); i++) {
+			Group g = groups.get(i);
+			if (g.name.equals(groupName)) {
+				g.permissions.remove(permission);
+				groups.set(i, g);
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
+	
+	/**
+	 * Sets a group's prefix
+	 * 
+	 * @param groupName Name of group
+	 * @param prefix New prefix value
+	 * @return Whether the group was found
+	 */
+	public boolean setGroupPrefix(String groupName, String prefix) {
+		
+		for (int i = 0; i < groups.size(); i++) {
+			Group g = groups.get(i);
+			if (g.name.equals(groupName)) {
+				g.prefix = prefix;
+				groups.set(i, g);
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
+	
+	/**
+	 * Sets a group's suffix
+	 * 
+	 * @param groupName Name of group
+	 * @param suffix New suffix value
+	 * @return Whether the group was found
+	 */
+	public boolean setGroupSuffix(String groupName, String suffix) {
+		
+		for (int i = 0; i < groups.size(); i++) {
+			Group g = groups.get(i);
+			if (g.name.equals(groupName)) {
+				g.suffix = suffix;
+				groups.set(i, g);
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
+	
+	/**
+	 * Sets a group's priority
+	 * 
+	 * @param groupName Name of group
+	 * @param priority New priority value
+	 * @return Whether the group was found
+	 */
+	public boolean setGroupPriority(String groupName, int priority) {
+		
+		for (int i = 0; i < groups.size(); i++) {
+			Group g = groups.get(i);
+			if (g.name.equals(groupName)) {
+				g.priority = priority;
+				groups.set(i, g);
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
+	
 }

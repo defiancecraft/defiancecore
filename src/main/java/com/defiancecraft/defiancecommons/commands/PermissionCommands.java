@@ -29,6 +29,15 @@ public class PermissionCommands {
 	// <group>
 	private static final Pattern PAT_GROUP = Pattern.compile("^([^ ]+)$");
 	
+	// <group> <perm>
+	private static final Pattern PAT_GROUPPERM = Pattern.compile("^([^ ]+) ([^ ]+)$");
+	
+	// <group> [prefix] or <group> [suffix]
+	private static final Pattern PAT_GROUPMETA = Pattern.compile("^([^ ]+)(?: (.*))?$");
+	
+	// <group> <priority>
+	private static final Pattern PAT_GROUPPRIORITY = Pattern.compile("^([^ ]+) (\\d+)$"); 
+	
 	/**
 	 * Convenice method to attempt to send a
 	 * message to UUID `u`. This will work if
@@ -250,13 +259,142 @@ public class PermissionCommands {
 			return true;
 		}
 		
-		Group g = new PermissionConfig.Group(groupName);
 		PermissionManager pm = DefianceCommons.getPermissionManager();
+		if (pm.getConfig().getGroup(groupName) != null) {
+			sender.sendMessage(ChatColor.RED + "Group already exists.");
+			return true;
+		}
+		
+		Group g = new PermissionConfig.Group(groupName);
 		
 		pm.getConfig().groups.add(g);
 		pm.saveConfig();
 		
 		sender.sendMessage(String.format(ChatColor.GREEN + "Created group %s", groupName));
+		return true;
+		
+	}
+
+	/*
+	 * Command:    /perm addperm <group> <perm>
+	 * Permission: defiancecraft.perm.addperm
+	 */
+	public static boolean addPerm(CommandSender sender, String[] args) {
+		
+		String arguments = String.join(" ", args);
+		Matcher matcher  = PAT_GROUPPERM.matcher(arguments);
+		String groupName = RegexUtils.getGroup(1, matcher);
+		String perm      = RegexUtils.getGroup(2, matcher);
+		
+		if (groupName.isEmpty() || perm.isEmpty()) {
+			sender.sendMessage("Usage: /perm addperm <group> <perm>");
+			return true;
+		}
+		
+		PermissionManager pm = DefianceCommons.getPermissionManager();
+		boolean success = pm.getConfig().addPermission(groupName, perm);
+		
+		if (!success) {
+			sender.sendMessage(String.format(ChatColor.RED + "Could not find group '%s'", groupName));
+			return true;
+		}
+	
+		sender.sendMessage(ChatColor.GREEN + "Successfully added permission. Run /perm reload to apply this new permission to players.");
+		pm.saveConfig();
+		
+		return true;
+		
+	}
+	
+	/*
+	 * Command:    /perm remperm <group> <perm>
+	 * Permission: defiancecraft.perm.remperm
+	 */
+	public static boolean remPerm(CommandSender sender, String[] args) {
+		
+		String arguments = String.join(" ", args);
+		Matcher matcher  = PAT_GROUPPERM.matcher(arguments);
+		String groupName = RegexUtils.getGroup(1, matcher);
+		String perm      = RegexUtils.getGroup(2, matcher);
+		
+		if (groupName.isEmpty() || perm.isEmpty()) {
+			sender.sendMessage("Usage: /perm remperm <group> <perm>");
+			return true;
+		}
+		
+		PermissionManager pm = DefianceCommons.getPermissionManager();
+		boolean success = pm.getConfig().removePermission(groupName, perm);
+		
+		if (!success) {
+			sender.sendMessage(String.format(ChatColor.RED + "Could not find group '%s'", groupName));
+			return true;
+		}
+
+		sender.sendMessage(ChatColor.GREEN + "Successfully removed permission. Run /perm reload to remove this permission from online players who have the group.");
+		pm.saveConfig();
+		
+		return true;
+		
+	}
+	
+	// @see #setUserMeta(CommandSender, String[] boolean)
+	public static boolean setGroupMeta(CommandSender sender, String[] args, boolean prefix) {
+		
+		String arguments = String.join(" ", args);
+		Matcher matcher  = PAT_GROUPMETA.matcher(arguments);
+		String groupName = RegexUtils.getGroup(1, matcher);
+		String meta      = RegexUtils.getGroup(2, matcher);
+		
+		// Friendly name for prefix/suffix, for reference in messages
+		String friendly  = prefix ? "prefix" : "suffix";
+		
+		if (groupName.isEmpty()) {
+			sender.sendMessage(String.format("Usage: /perm set%1$s <group> [%1$s]", friendly));
+			return true;
+		}
+
+		PermissionManager pm = DefianceCommons.getPermissionManager();
+		boolean success = prefix ? pm.getConfig().setGroupPrefix(groupName, meta) : pm.getConfig().setGroupSuffix(groupName, meta);
+		
+		if (!success) {
+			sender.sendMessage(ChatColor.RED + "Group not found.");
+		} else {
+			sender.sendMessage(String.format(ChatColor.GREEN + "Successfully updated group %s. To re-apply this to online players with the group, run /perm reload.", friendly));
+			pm.saveConfig();
+		}
+		
+		return true;
+		
+	}
+	
+	/*
+	 * Command:    /perm setpriority <group> <priority>
+	 * Permission: defiancecraft.perm.setpriority
+	 */
+	public static boolean setPriority(CommandSender sender, String[] args) {
+	
+		String arguments = String.join(" ", args);
+		Matcher matcher  = PAT_GROUPPRIORITY.matcher(arguments);
+		String groupName = RegexUtils.getGroup(1, matcher);
+		String priString = RegexUtils.getGroup(2, matcher);
+		
+		if (groupName.isEmpty() || priString.isEmpty()) {
+			sender.sendMessage("Usage: /perm setpriority <group> <priority>");
+			return true;
+		}
+		
+		int priority = Integer.parseInt(priString);
+		
+		PermissionManager pm = DefianceCommons.getPermissionManager();
+		boolean success = pm.getConfig().setGroupPriority(groupName, priority);
+		
+		if (!success) {
+			sender.sendMessage(ChatColor.RED + "Group not found.");
+		} else {
+			sender.sendMessage(ChatColor.GREEN + "Successfully set group priority.");
+			pm.saveConfig();
+		}
+		
 		return true;
 		
 	}
@@ -278,16 +416,5 @@ public class PermissionCommands {
 		return true;
 		
 	}
-	
-	/*
-	public static boolean createGroup(CommandSender sender, String[] args) {}
-	public static boolean addPerm(CommandSender sender, String[] args) {}
-	public static boolean remPerm(CommandSender sender, String[] args) {}
-	public static boolean setGroupPrefix(CommandSender sender, String[] args) {}
-	public static boolean setGroupSuffix(CommandSender sender, String[] args) {}
-	public static boolean setGroupPriority(CommandSender sender, String[] args) {}
-	public static boolean clearGroupPrefix(CommandSender sender, String[] args) {}
-	public static boolean clearGroupSuffix(CommandSender sender, String[] args) {}
-	*/
 	
 }
