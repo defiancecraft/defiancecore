@@ -21,6 +21,9 @@ public class PermissionCommands {
 	// <user> <group> Pattern
 	private static final Pattern PAT_USERGROUP = Pattern.compile("^([a-zA-Z0-9_]{1,16}) ([^ ]+)$");
 	
+	// <user> [prefix] or <user> [suffix]
+	private static final Pattern PAT_USERMETA = Pattern.compile("^([a-zA-Z0-9_]{1,16})(?: (.*))?$");
+	
 	/**
 	 * Convenice method to attempt to send a
 	 * message to UUID `u`. This will work if
@@ -57,21 +60,21 @@ public class PermissionCommands {
 	 */
 	public static boolean help(CommandSender sender, String[] args) {
 		
-		sender.sendMessage(
-			"§9§lPermissions Help\n" +
-			"§3§oUser Commands:\n" +
-			"§b- /perm addgroup <user> <group>\n" +
-			"§b- /perm remgroup <user> <group>\n" +
-			"§b- /perm setuserprefix <user> [prefix]\n" +
-			"§b- /perm setusersuffix <user> [suffix]\n" +
-			"§3§oGroup Commands:\n" +
-			"§b- /perm reload\n" +
-			"§b- /perm addperm <group> <perm>\n" +
-			"§b- /perm remperm <group> <perm>\n" +
-			"§b- /perm setgroupprefix <group> [prefix]\n" +
-			"§b- /perm setgroupsuffix <group> [suffix]\n" +
-			"§b- /perm setpriority <group> [priority]\n"
-		);
+		sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+			"&9&lPermissions Help\n" +
+			"&3&oUser Commands:\n" +
+			"&b- /perm addgroup <user> <group>\n" +
+			"&b- /perm remgroup <user> <group>\n" +
+			"&b- /perm setuserprefix <user> [prefix]\n" +
+			"&b- /perm setusersuffix <user> [suffix]\n" +
+			"&3&oGroup Commands:\n" +
+			"&b- /perm reload\n" +
+			"&b- /perm addperm <group> <perm>\n" +
+			"&b- /perm remperm <group> <perm>\n" +
+			"&b- /perm setgroupprefix <group> [prefix]\n" +
+			"&b- /perm setgroupsuffix <group> [suffix]\n" +
+			"&b- /perm setpriority <group> [priority]\n"
+		));
 	
 		return true;
 		
@@ -120,7 +123,7 @@ public class PermissionCommands {
 			
 		});
 		
-		sender.sendMessage("Adding group...");
+		sender.sendMessage(ChatColor.GRAY + "Adding group...");
 		return true;
 		
 	}
@@ -168,6 +171,60 @@ public class PermissionCommands {
 			
 		});
 		
+		sender.sendMessage(ChatColor.GRAY + "Removing group...");
+		return true;
+		
+	}
+
+	// This is a generic method to set either the user's
+	// suffix or prefix via commands, as these do nearly the exact
+	// same thing. Instead of directly registering this method, a
+	// lambda function calls this with the appropriate `prefix`
+	// argument (whether it should set prefix - false implies that
+	// suffix will be set).
+	public static boolean setUserMeta(CommandSender sender, String[] args, boolean prefix) {
+
+		String arguments = String.join(" ", args);
+		Matcher matcher  = PAT_USERMETA.matcher(arguments);
+		
+		final String user   = RegexUtils.getGroup(1, matcher);
+		final String meta   = RegexUtils.getGroup(2, matcher);
+		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		
+		// Friendly name for prefix/suffix, for reference in messages
+		final String friendly = prefix ? "prefix" : "suffix";
+		
+		if (user.isEmpty()) {
+			sender.sendMessage(String.format("Usage: /perm setuser%s <user> [prefix]", friendly));
+			return true;
+		}
+		
+		Database.getExecutorService().submit(() -> {
+		
+			User u = User.findByNameOrCreate(user);
+			if (u == null) {
+				trySend(senderUUID, "&cCould not find user with name '%s'", true, user);
+				return;
+			}
+			
+			boolean success = prefix ? u.setPrefix(meta) : u.setSuffix(meta);
+			if (!success) {
+				trySend(senderUUID, "&cFailed to set %s '%s' for user '%s'.", true, friendly, meta, user);
+				return;
+			}
+			
+			// Update player's metadata if they are online
+			Player target = Bukkit.getPlayer(u.getDBU().getUUID());
+			PermissionManager pm = DefianceCommons.getPermissionManager();
+			
+			if (target != null)
+				pm.updateMetadata(target, u.getDBU());
+			
+			trySend(senderUUID, "&aSuccessfully updated %s for user '%s'.", true, friendly, user);
+		
+		});
+		
+		sender.sendMessage(String.format(ChatColor.GRAY + "Setting user's %s", friendly));
 		return true;
 		
 	}

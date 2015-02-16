@@ -38,7 +38,7 @@ public class ChatListener implements Listener {
 				.replace("{suffix}", meta.getSuffix())
 				.replace("{name}", "%1$s")
 				.replace("{message}", "%2$s")
-				.replace("&", "§");
+				.replace("&", "\u00A7"); // Section Symbol U+00A7
 		
 		e.setFormat(chatFormat);
 		
