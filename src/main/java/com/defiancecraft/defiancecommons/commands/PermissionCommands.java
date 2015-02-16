@@ -218,7 +218,7 @@ public class PermissionCommands {
 			PermissionManager pm = DefianceCommons.getPermissionManager();
 			
 			if (target != null)
-				pm.updateMetadata(target, u.getDBU());
+				pm.updateMetadata(target);
 			
 			trySend(senderUUID, "&aSuccessfully updated %s for user '%s'.", true, friendly, user);
 		
@@ -248,10 +248,6 @@ public class PermissionCommands {
 	}
 	
 	/*
-	public static boolean setUserPrefix(CommandSender sender, String[] args) {}
-	public static boolean setUserSuffix(CommandSender sender, String[] args) {}
-	
-	public static boolean reloadGroups(CommandSender sender, String[] args) {}
 	public static boolean createGroup(CommandSender sender, String[] args) {}
 	public static boolean addPerm(CommandSender sender, String[] args) {}
 	public static boolean remPerm(CommandSender sender, String[] args) {}
