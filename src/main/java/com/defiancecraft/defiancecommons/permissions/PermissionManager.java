@@ -136,6 +136,14 @@ public class PermissionManager {
 			
 		}
 		
+		// Set custom prefix if existent
+		if (user.getCustomPrefix() != null && !user.getCustomPrefix().isEmpty())
+			prefix = user.getCustomPrefix();
+		
+		// Set custom suffix if existent
+		if (user.getCustomSuffix() != null && !user.getCustomSuffix().isEmpty())
+			suffix = user.getCustomSuffix();
+		
 		return new String[] { prefix, suffix };
 		
 	}
