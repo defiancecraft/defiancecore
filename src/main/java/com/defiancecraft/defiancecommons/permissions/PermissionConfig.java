@@ -15,7 +15,7 @@ public class PermissionConfig extends JsonConfig {
 	);
 	public List<String> defaultGroups = Arrays.asList("noob");
 	
-	class Group {
+	public static class Group {
 		
 		public String name = "";
 		public String prefix = "";
@@ -24,6 +24,7 @@ public class PermissionConfig extends JsonConfig {
 		public List<String> inherit = new ArrayList<String>();
 		public int priority = 0;
 		
+		// Private constructor for defining default groups
 		Group(String name, String prefix, String suffix, List<String> permissions, List<String> inherit, int priority) {
 			this.name = name;
 			this.prefix = prefix;
@@ -31,6 +32,11 @@ public class PermissionConfig extends JsonConfig {
 			this.permissions = permissions;
 			this.inherit = inherit;
 			this.priority = priority;
+		}
+		
+		// Public constructor for creating new groups
+		public Group(String name) {
+			this.name = name;
 		}
 		
 		public List<String> getInherit() {

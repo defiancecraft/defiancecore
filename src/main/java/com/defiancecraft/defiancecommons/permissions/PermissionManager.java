@@ -334,4 +334,13 @@ public class PermissionManager {
 		
 	}
 	
+	/**
+	 * Saves the configuration to file
+	 */
+	public void saveConfig() {
+		
+		this.config.save(FileUtils.getSharedConfig("permissions.json"));
+		
+	}
+	
 }

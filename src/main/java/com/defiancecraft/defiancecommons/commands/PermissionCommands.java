@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 import com.defiancecraft.defiancecommons.DefianceCommons;
 import com.defiancecraft.defiancecommons.api.User;
 import com.defiancecraft.defiancecommons.database.Database;
+import com.defiancecraft.defiancecommons.permissions.PermissionConfig;
+import com.defiancecraft.defiancecommons.permissions.PermissionConfig.Group;
 import com.defiancecraft.defiancecommons.permissions.PermissionManager;
 import com.defiancecraft.defiancecommons.util.RegexUtils;
 
@@ -23,6 +25,9 @@ public class PermissionCommands {
 	
 	// <user> [prefix] or <user> [suffix]
 	private static final Pattern PAT_USERMETA = Pattern.compile("^([a-zA-Z0-9_]{1,16})(?: (.*))?$");
+	
+	// <group>
+	private static final Pattern PAT_GROUP = Pattern.compile("^([^ ]+)$");
 	
 	/**
 	 * Convenice method to attempt to send a
@@ -69,6 +74,7 @@ public class PermissionCommands {
 			"&b- /perm setusersuffix <user> [suffix]\n" +
 			"&3&oGroup Commands:\n" +
 			"&b- /perm reload\n" +
+			"&b- /perm creategroup <group>\n" +
 			"&b- /perm addperm <group> <perm>\n" +
 			"&b- /perm remperm <group> <perm>\n" +
 			"&b- /perm setgroupprefix <group> [prefix]\n" +
@@ -225,6 +231,32 @@ public class PermissionCommands {
 		});
 		
 		sender.sendMessage(String.format(ChatColor.GRAY + "Setting user's %s", friendly));
+		return true;
+		
+	}
+
+	/*
+	 * Command:    /perm creategroup <group>
+	 * Permission: defiancecraft.perm.creategroup
+	 */
+	public static boolean createGroup(CommandSender sender, String[] args) {
+		
+		String arguments = String.join(" ", args);
+		Matcher matcher  = PAT_GROUP.matcher(arguments);
+		String groupName = RegexUtils.getGroup(1, matcher);
+		
+		if (groupName.isEmpty()) {
+			sender.sendMessage("Usage: /perm creategroup <group>");
+			return true;
+		}
+		
+		Group g = new PermissionConfig.Group(groupName);
+		PermissionManager pm = DefianceCommons.getPermissionManager();
+		
+		pm.getConfig().groups.add(g);
+		pm.saveConfig();
+		
+		sender.sendMessage(String.format(ChatColor.GREEN + "Created group %s", groupName));
 		return true;
 		
 	}
