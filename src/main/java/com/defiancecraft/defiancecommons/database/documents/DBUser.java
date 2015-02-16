@@ -15,6 +15,8 @@ public class DBUser extends Document {
 	public static final String FIELD_NAME = "name";
 	public static final String FIELD_LAST_UPDATED = "last_updated";
 	public static final String FIELD_GROUPS = "groups";
+	public static final String FIELD_CUSTOM_PREFIX = "custom_prefix";
+	public static final String FIELD_CUSTOM_SUFFIX = "custom_suffix";
 	
 	public DBUser(DBObject obj) {
 		super(obj);
@@ -54,6 +56,14 @@ public class DBUser extends Document {
 			groups.add(group);
 		getDBO().put(FIELD_GROUPS, groups);
 		
+	}
+	
+	public String getCustomPrefix() {
+		return getString(FIELD_CUSTOM_PREFIX);
+	}
+	
+	public String getCustomSuffix() {
+		return getString(FIELD_CUSTOM_SUFFIX);
 	}
 	
 }

@@ -2,8 +2,6 @@ package com.defiancecraft.defiancecommons.api;
 
 import java.util.UUID;
 
-import org.bson.types.ObjectId;
-
 import com.defiancecraft.defiancecommons.database.Database;
 import com.defiancecraft.defiancecommons.database.collections.Users;
 import com.defiancecraft.defiancecommons.database.documents.DBUser;
@@ -33,6 +31,16 @@ public class User {
 	}
 	
 	/**
+	 * Generates a query object to be used in
+	 * updates
+	 * 
+	 * @return DBObject
+	 */
+	private DBObject generateQuery() {
+		return new BasicDBObject(DBUser.FIELD_ID, dbu.getId());
+	}
+	
+	/**
 	 * Gets the DBUser associated with this
 	 * user.
 	 * 
@@ -54,8 +62,7 @@ public class User {
 	 */
 	public boolean addGroup(String group) {
 		
-		ObjectId id = dbu.getId();
-		DBObject query = new BasicDBObject(DBUser.FIELD_ID, id);
+		DBObject query = generateQuery();
 		DBObject data  = new BasicDBObject("$addToSet", new BasicDBObject(DBUser.FIELD_GROUPS, group));
 		
 		return Database.getCollection(Users.class).update(query, data).getN() > 0;
@@ -72,11 +79,54 @@ public class User {
 	 */
 	public boolean removeGroup(String group) {
 		
-		ObjectId id = dbu.getId();
-		DBObject query = new BasicDBObject(DBUser.FIELD_ID, id);
+		DBObject query = generateQuery();
 		DBObject data  = new BasicDBObject("$pull", new BasicDBObject(DBUser.FIELD_GROUPS, group));
 		
 		return Database.getCollection(Users.class).updateMulti(query, data).getN() > 0;
+		
+	}
+	
+	/**
+	 * Sets the user's custom prefix to the specified prefix
+	 * by performing an update on the database. If `prefix` is
+	 * null or empty, their custom prefix will be unset.
+	 * 
+	 * @param prefix Prefix to set (can be null)
+	 * @return Whether the prefix was set
+	 */
+	public boolean setPrefix(String prefix) {
+			
+		prefix = prefix == null ? "" : prefix; // Prevent NPEs on BasicDBObject
+		
+		DBObject query = generateQuery();
+		DBObject data  = new BasicDBObject( // Change $set to $unset if prefix is empty
+			prefix.isEmpty() ? "$unset" : "$set",
+			new BasicDBObject(DBUser.FIELD_CUSTOM_PREFIX, prefix)
+		);
+		
+		return Database.getCollection(Users.class).update(query, data).getN() > 0;
+		
+	}
+	
+	/**
+	 * Sets the user's custom suffix to the specified suffix
+	 * by performing an update on the database. If `suffix` is
+	 * null or empty, their custom suffix will be unset.
+	 * 
+	 * @param suffix Suffix to set (can be null)
+	 * @return Whether the suffix was set
+	 */
+	public boolean setSuffix(String suffix) {
+		
+		suffix = suffix == null ? "" : suffix; // Prevent NPEs on BasicDBObject
+		
+		DBObject query = generateQuery();
+		DBObject data  = new BasicDBObject(
+			suffix.isEmpty() ? "$unset" : "$set",
+			new BasicDBObject(DBUser.FIELD_CUSTOM_SUFFIX, suffix)
+		);
+		
+		return Database.getCollection(Users.class).update(query, data).getN() > 0;
 		
 	}
 	
