@@ -17,7 +17,7 @@ public class PermissionListener implements Listener {
 		this.pm = pm;
 	}
 	
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		
 		pm.updatePlayer(e.getPlayer());
