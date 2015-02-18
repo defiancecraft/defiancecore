@@ -25,7 +25,7 @@ public class FileUtils {
 	
 	/**
 	 * Attempts to get the plugins directory
-	 * from the DefianceCommons jar.
+	 * from the DefianceCore jar.
 	 * 
 	 * @return File object representing the plugins directory
 	 */
