@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.bson.types.ObjectId;
@@ -192,7 +191,7 @@ public class Database {
 	public static ExecutorService getExecutorService() {
 		
 		if (Database.execService == null)
-			Database.execService = Executors.newFixedThreadPool(config.threads);
+			Database.execService = new DatabaseExecutorService(config.threads);
 		
 		return Database.execService;
 		
