@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.database;
+package com.defiancecraft.core.database;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -11,11 +11,11 @@ import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
 
 import com.archeinteractive.defiancetools.util.JsonConfig;
-import com.defiancecraft.defiancecommons.DefianceCommons;
-import com.defiancecraft.defiancecommons.database.collections.Collection;
-import com.defiancecraft.defiancecommons.database.collections.Servers;
-import com.defiancecraft.defiancecommons.database.collections.Users;
-import com.defiancecraft.defiancecommons.util.FileUtils;
+import com.defiancecraft.core.DefianceCore;
+import com.defiancecraft.core.database.collections.Collection;
+import com.defiancecraft.core.database.collections.Servers;
+import com.defiancecraft.core.database.collections.Users;
+import com.defiancecraft.core.util.FileUtils;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBObject;
@@ -39,7 +39,7 @@ public class Database {
 	 * @param p The plugin
 	 * @throws UnknownHostException
 	 */
-	public static void init(DefianceCommons p) throws MongoException, UnknownHostException {
+	public static void init(DefianceCore p) throws MongoException, UnknownHostException {
 		
 		if (Database.config != null)
 			return;

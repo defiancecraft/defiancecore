@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.util;
+package com.defiancecraft.core.util;
 
 import java.util.regex.Matcher;
 

@@ -1,5 +1,5 @@
-name: DefianceCommons
-main: com.defiancecraft.defiancecommons.DefianceCommons
+name: DefianceCore
+main: com.defiancecraft.core.DefianceCore
 version: 0.0.1
 depend: [DefianceTools]
 commands:

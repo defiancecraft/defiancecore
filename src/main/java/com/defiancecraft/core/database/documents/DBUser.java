@@ -1,11 +1,11 @@
-package com.defiancecraft.defiancecommons.database.documents;
+package com.defiancecraft.core.database.documents;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.defiancecraft.defiancecommons.DefianceCommons;
+import com.defiancecraft.core.DefianceCore;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -26,7 +26,7 @@ public class DBUser extends Document {
 		super(new BasicDBObject());
 		getDBO().put(FIELD_UUID, uuid.toString());
 		getDBO().put(FIELD_NAME, name);
-		getDBO().put(FIELD_GROUPS, DefianceCommons
+		getDBO().put(FIELD_GROUPS, DefianceCore
 					.getPermissionManager()
 					.getConfig()
 					.defaultGroups);

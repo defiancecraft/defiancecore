@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.listeners;
+package com.defiancecraft.core.listeners;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.defiancecraft.defiancecommons.permissions.PermissionManager;
+import com.defiancecraft.core.permissions.PermissionManager;
 
 public class PermissionListener implements Listener {
 

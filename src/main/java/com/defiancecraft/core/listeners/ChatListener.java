@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.listeners;
+package com.defiancecraft.core.listeners;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -6,8 +6,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import com.defiancecraft.defiancecommons.permissions.PermissionManager;
-import com.defiancecraft.defiancecommons.permissions.PermissionMetadata;
+import com.defiancecraft.core.permissions.PermissionManager;
+import com.defiancecraft.core.permissions.PermissionMetadata;
 
 public class ChatListener implements Listener {
 

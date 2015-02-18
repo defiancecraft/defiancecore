@@ -1,16 +1,16 @@
-package com.defiancecraft.defiancecommons;
+package com.defiancecraft.core;
 
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.archeinteractive.defiancetools.util.command.CommandRegistry;
-import com.defiancecraft.defiancecommons.commands.PermissionCommands;
-import com.defiancecraft.defiancecommons.database.Database;
-import com.defiancecraft.defiancecommons.listeners.ChatListener;
-import com.defiancecraft.defiancecommons.listeners.PermissionListener;
-import com.defiancecraft.defiancecommons.permissions.PermissionManager;
+import com.defiancecraft.core.commands.PermissionCommands;
+import com.defiancecraft.core.database.Database;
+import com.defiancecraft.core.listeners.ChatListener;
+import com.defiancecraft.core.listeners.PermissionListener;
+import com.defiancecraft.core.permissions.PermissionManager;
 
-public class DefianceCommons extends JavaPlugin {
+public class DefianceCore extends JavaPlugin {
 
 	private static PermissionManager manager;
 	
@@ -45,16 +45,16 @@ public class DefianceCommons extends JavaPlugin {
 		 * Setup permissions
 		 */
 		
-		DefianceCommons.manager = new PermissionManager(this);
-		DefianceCommons.manager.reload();
+		DefianceCore.manager = new PermissionManager(this);
+		DefianceCore.manager.reload();
 		
 		/*
 		 * Register event listeners (for permissions) 
 		 */
 		
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(new PermissionListener(DefianceCommons.manager), this);
-		pm.registerEvents(new ChatListener(DefianceCommons.manager), this);
+		pm.registerEvents(new PermissionListener(DefianceCore.manager), this);
+		pm.registerEvents(new ChatListener(DefianceCore.manager), this);
 		
 		/*
 		 * Register commands

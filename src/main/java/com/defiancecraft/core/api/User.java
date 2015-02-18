@@ -1,12 +1,12 @@
-package com.defiancecraft.defiancecommons.api;
+package com.defiancecraft.core.api;
 
 import java.util.UUID;
 
-import com.defiancecraft.defiancecommons.database.Database;
-import com.defiancecraft.defiancecommons.database.collections.Users;
-import com.defiancecraft.defiancecommons.database.documents.DBUser;
-import com.defiancecraft.defiancecommons.util.UUIDUtils;
-import com.defiancecraft.defiancecommons.util.UUIDUtils.UUIDResponse;
+import com.defiancecraft.core.database.Database;
+import com.defiancecraft.core.database.collections.Users;
+import com.defiancecraft.core.database.documents.DBUser;
+import com.defiancecraft.core.util.UUIDUtils;
+import com.defiancecraft.core.util.UUIDUtils.UUIDResponse;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 

@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.permissions;
+package com.defiancecraft.core.permissions;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,11 +14,11 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.Plugin;
 
 import com.archeinteractive.defiancetools.util.JsonConfig;
-import com.defiancecraft.defiancecommons.database.Database;
-import com.defiancecraft.defiancecommons.database.collections.Users;
-import com.defiancecraft.defiancecommons.database.documents.DBUser;
-import com.defiancecraft.defiancecommons.permissions.PermissionConfig.Group;
-import com.defiancecraft.defiancecommons.util.FileUtils;
+import com.defiancecraft.core.database.Database;
+import com.defiancecraft.core.database.collections.Users;
+import com.defiancecraft.core.database.documents.DBUser;
+import com.defiancecraft.core.permissions.PermissionConfig.Group;
+import com.defiancecraft.core.util.FileUtils;
 
 public class PermissionManager {
 

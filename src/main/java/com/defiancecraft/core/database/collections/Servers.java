@@ -1,6 +1,6 @@
-package com.defiancecraft.defiancecommons.database.collections;
+package com.defiancecraft.core.database.collections;
 
-import com.defiancecraft.defiancecommons.database.documents.DBServer;
+import com.defiancecraft.core.database.documents.DBServer;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 

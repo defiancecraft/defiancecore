@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.database.collections;
+package com.defiancecraft.core.database.collections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import com.defiancecraft.defiancecommons.database.Database;
-import com.defiancecraft.defiancecommons.database.documents.DBUser;
+import com.defiancecraft.core.database.Database;
+import com.defiancecraft.core.database.documents.DBUser;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 

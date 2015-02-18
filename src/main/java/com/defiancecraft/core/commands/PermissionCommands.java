@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.commands;
+package com.defiancecraft.core.commands;
 
 import java.util.IllegalFormatException;
 import java.util.UUID;
@@ -10,13 +10,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.defiancecraft.defiancecommons.DefianceCommons;
-import com.defiancecraft.defiancecommons.api.User;
-import com.defiancecraft.defiancecommons.database.Database;
-import com.defiancecraft.defiancecommons.permissions.PermissionConfig;
-import com.defiancecraft.defiancecommons.permissions.PermissionConfig.Group;
-import com.defiancecraft.defiancecommons.permissions.PermissionManager;
-import com.defiancecraft.defiancecommons.util.RegexUtils;
+import com.defiancecraft.core.DefianceCore;
+import com.defiancecraft.core.api.User;
+import com.defiancecraft.core.database.Database;
+import com.defiancecraft.core.permissions.PermissionConfig;
+import com.defiancecraft.core.permissions.PermissionManager;
+import com.defiancecraft.core.permissions.PermissionConfig.Group;
+import com.defiancecraft.core.util.RegexUtils;
 
 public class PermissionCommands {
 
@@ -129,7 +129,7 @@ public class PermissionCommands {
 			
 			// Update player's perms if they are online
 			Player target = Bukkit.getPlayer(u.getDBU().getUUID());
-			PermissionManager pm = DefianceCommons.getPermissionManager();
+			PermissionManager pm = DefianceCore.getPermissionManager();
 			
 			if (target != null)
 				pm.updatePlayer(target);
@@ -177,7 +177,7 @@ public class PermissionCommands {
 			
 			// Update player's perms if they are online
 			Player target = Bukkit.getPlayer(u.getDBU().getUUID());
-			PermissionManager pm = DefianceCommons.getPermissionManager();
+			PermissionManager pm = DefianceCore.getPermissionManager();
 			
 			if (target != null)
 				pm.updatePlayer(target);
@@ -230,7 +230,7 @@ public class PermissionCommands {
 			
 			// Update player's metadata if they are online
 			Player target = Bukkit.getPlayer(u.getDBU().getUUID());
-			PermissionManager pm = DefianceCommons.getPermissionManager();
+			PermissionManager pm = DefianceCore.getPermissionManager();
 			
 			if (target != null)
 				pm.updateMetadata(target);
@@ -259,7 +259,7 @@ public class PermissionCommands {
 			return true;
 		}
 		
-		PermissionManager pm = DefianceCommons.getPermissionManager();
+		PermissionManager pm = DefianceCore.getPermissionManager();
 		if (pm.getConfig().getGroup(groupName) != null) {
 			sender.sendMessage(ChatColor.RED + "Group already exists.");
 			return true;
@@ -291,7 +291,7 @@ public class PermissionCommands {
 			return true;
 		}
 		
-		PermissionManager pm = DefianceCommons.getPermissionManager();
+		PermissionManager pm = DefianceCore.getPermissionManager();
 		boolean success = pm.getConfig().addPermission(groupName, perm);
 		
 		if (!success) {
@@ -322,7 +322,7 @@ public class PermissionCommands {
 			return true;
 		}
 		
-		PermissionManager pm = DefianceCommons.getPermissionManager();
+		PermissionManager pm = DefianceCore.getPermissionManager();
 		boolean success = pm.getConfig().removePermission(groupName, perm);
 		
 		if (!success) {
@@ -353,7 +353,7 @@ public class PermissionCommands {
 			return true;
 		}
 
-		PermissionManager pm = DefianceCommons.getPermissionManager();
+		PermissionManager pm = DefianceCore.getPermissionManager();
 		boolean success = prefix ? pm.getConfig().setGroupPrefix(groupName, meta) : pm.getConfig().setGroupSuffix(groupName, meta);
 		
 		if (!success) {
@@ -385,7 +385,7 @@ public class PermissionCommands {
 		
 		int priority = Integer.parseInt(priString);
 		
-		PermissionManager pm = DefianceCommons.getPermissionManager();
+		PermissionManager pm = DefianceCore.getPermissionManager();
 		boolean success = pm.getConfig().setGroupPriority(groupName, priority);
 		
 		if (!success) {
@@ -407,7 +407,7 @@ public class PermissionCommands {
 	
 		sender.sendMessage(ChatColor.GRAY + "Reloading permissions...");
 		
-		PermissionManager pm = DefianceCommons.getPermissionManager();
+		PermissionManager pm = DefianceCore.getPermissionManager();
 		pm.reloadConfig();
 		pm.reload();
 		

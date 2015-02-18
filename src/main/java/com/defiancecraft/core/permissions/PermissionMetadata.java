@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.permissions;
+package com.defiancecraft.core.permissions;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

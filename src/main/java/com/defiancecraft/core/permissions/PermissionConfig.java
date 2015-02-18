@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.permissions;
+package com.defiancecraft.core.permissions;
 
 import java.util.ArrayList;
 import java.util.Arrays;

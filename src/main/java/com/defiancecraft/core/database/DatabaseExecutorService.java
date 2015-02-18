@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.database;
+package com.defiancecraft.core.database;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;

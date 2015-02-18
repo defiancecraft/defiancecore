@@ -1,4 +1,4 @@
-package com.defiancecraft.defiancecommons.database.documents;
+package com.defiancecraft.core.database.documents;
 
 import com.mongodb.DBObject;
 
