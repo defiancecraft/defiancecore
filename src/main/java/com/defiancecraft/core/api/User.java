@@ -131,6 +131,22 @@ public class User {
 	}
 	
 	/**
+	 * Sets the user's balance by performing an update on the
+	 * database.
+	 * 
+	 * @param balance New balance of user
+	 * @return Whether the user's balance was set
+	 */
+	public boolean setBalance(double balance) {
+		
+		DBObject query = generateQuery();
+		DBObject data  = new BasicDBObject("$set", new BasicDBObject(DBUser.FIELD_BALANCE, balance));
+		
+		return Database.getCollection(Users.class).update(query, data).getN() > 0;
+		
+	}
+	
+	/**
 	 * Finds a user by their name, checking database first,
 	 * then resorting to UUID lookup (via Mojang), and then
 	 * just creating the user, if they are still not found.
@@ -224,6 +240,38 @@ public class User {
 		DBUser user = users.getByUUID(uuid);
 		
 		return user != null ? new User(user) : null;
+		
+	}
+	
+	/**
+	 * Checks whether a user exists.
+	 * 
+	 * @param name Name of user
+	 * @return Whether they exist.
+	 * @deprecated {@link #exists(UUID)} is preferred due to UUID migration.
+	 */
+	@Deprecated
+	public static boolean exists(String name) {
+		
+		Users users = Database.getCollection(Users.class);
+		DBUser user = users.getByName(name);
+		
+		return user != null;
+		
+	}
+	
+	/**
+	 * Checks whether a user exists.
+	 * 
+	 * @param uuid UUID of user
+	 * @return Whether they exist.
+	 */
+	public static boolean exists(UUID uuid) {
+	
+		Users users = Database.getCollection(Users.class);
+		DBUser user = users.getByUUID(uuid);
+		
+		return user != null;
 		
 	}
 	
