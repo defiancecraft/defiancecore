@@ -255,4 +255,38 @@ public class Document {
 		
 	}
 	
+	/**
+	 * Shortcut for {@link #getDouble(String, Double)}, with
+	 * default as 0.
+	 * 
+	 * @see #getDouble(String, Double)
+	 */
+	protected Double getDouble(String field) {
+		return getDouble(field, 0d);
+	}
+	
+	/**
+	 * Retrieves a double from the DBObject
+	 * 
+	 * @param field Field to get
+	 * @param def Default value if field is null or cannot convert to double
+	 * @return Double, or `def` on failure
+	 */
+	protected Double getDouble(String field, Double def) {
+		
+		Object obj = dbo.get(field);
+		
+		if (obj instanceof Number)
+			return ((Number)obj).doubleValue();
+		else if (obj instanceof Boolean)
+			return ((Boolean)obj) ? 1d : 0d;
+		else if (obj instanceof String)
+			try {
+				return Double.parseDouble((String)obj);
+			} catch (NumberFormatException e) {}
+		
+		return def;
+		
+	}
+	
 }
