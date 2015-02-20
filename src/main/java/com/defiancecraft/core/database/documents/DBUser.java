@@ -13,10 +13,10 @@ public class DBUser extends Document {
 
 	public static final String FIELD_UUID = "uuid";
 	public static final String FIELD_NAME = "name";
-	public static final String FIELD_LAST_UPDATED = "last_updated";
 	public static final String FIELD_GROUPS = "groups";
 	public static final String FIELD_CUSTOM_PREFIX = "custom_prefix";
 	public static final String FIELD_CUSTOM_SUFFIX = "custom_suffix";
+	public static final String FIELD_BALANCE = "balance";
 	
 	public DBUser(DBObject obj) {
 		super(obj);
@@ -30,7 +30,6 @@ public class DBUser extends Document {
 					.getPermissionManager()
 					.getConfig()
 					.defaultGroups);
-		getDBO().put(FIELD_LAST_UPDATED, time);
 	}
 	
 	public DBUser(UUID uuid, String name) {
@@ -64,6 +63,10 @@ public class DBUser extends Document {
 	
 	public String getCustomSuffix() {
 		return getString(FIELD_CUSTOM_SUFFIX);
+	}
+	
+	public double getBalance() {
+		return getDouble(FIELD_BALANCE);
 	}
 	
 }
