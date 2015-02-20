@@ -68,12 +68,26 @@ public class Users extends Collection {
 	 */
 	public DBUser getUserOrCreate(Player p) {
 		
-		UUID uuid = p.getUniqueId();
+		return getUserOrCreate(p.getName(), p.getUniqueId());
+		
+	}
+	
+	/**
+	 * Gets a user, or creates one _asynchronously_
+	 * if they do not exist. Does not wait for create
+	 * action to complete if it needs to create a user.
+	 * 
+	 * @param name Name of player
+	 * @param uuid UUID of player
+	 * @return DBUser
+	 */
+	public DBUser getUserOrCreate(String name, UUID uuid) {
+		
 		DBUser user = getByUUID(uuid);
 		if (user != null)
 			return user;
 		
-		user = new DBUser(uuid, p.getName());
+		user = new DBUser(uuid, name);
 		
 		// Create final equivalent for Runnable
 		final DBUser newUser = user;
