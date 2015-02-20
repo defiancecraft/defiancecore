@@ -132,7 +132,7 @@ public class PermissionCommands {
 			PermissionManager pm = DefianceCore.getPermissionManager();
 			
 			if (target != null)
-				pm.updatePlayer(target);
+				pm.updatePlayer(target, true);
 				
 			trySend(senderUUID, "&aSuccessfully added group '%s' to user '%s'.", true, group, user);
 			
@@ -180,7 +180,7 @@ public class PermissionCommands {
 			PermissionManager pm = DefianceCore.getPermissionManager();
 			
 			if (target != null)
-				pm.updatePlayer(target);
+				pm.updatePlayer(target, true);
 				
 			trySend(senderUUID, "&aSuccessfully removed group '%s' from user '%s'.", true, group, user);
 			

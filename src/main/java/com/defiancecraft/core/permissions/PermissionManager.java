@@ -304,11 +304,21 @@ public class PermissionManager {
 	 * Updates the permissions and metadata for a player, using
 	 * a single database query. This should be used in favour of
 	 * {@link #updateMetadata(Player)} and {@link #updatePermissions(Player)}.
+	 * 
 	 * @param player Player to update
+	 * @param createUser Whether to create the user if they don't exist.
 	 */
-	public void updatePlayer(Player player) {
+	public void updatePlayer(Player player, boolean createUser) {
 		
-		DBUser user = Database.getCollection(Users.class).getUserOrCreate(player);
+		DBUser user;
+		
+		if (createUser)
+			user = Database.getCollection(Users.class).getUserOrCreate(player);
+		else
+			// Get user by UUID; if they aren't found, set `user` to a new DBUser object (with defaults)
+			user = (user = Database.getCollection(Users.class).getByUUID(player.getUniqueId())) != null ?
+					user : new DBUser(player.getUniqueId(), player.getName());
+		
 		updatePermissions(player, user);
 		updateMetadata(player, user);
 		
@@ -321,7 +331,7 @@ public class PermissionManager {
 	public void reload() {
 		
 		for (Player p : Bukkit.getOnlinePlayers())
-			updatePlayer(p);
+			updatePlayer(p, false);
 		
 	}
 	
