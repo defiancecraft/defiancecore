@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.bson.types.ObjectId;
 import org.bukkit.entity.Player;
 
 import com.defiancecraft.core.database.Database;
@@ -12,6 +11,7 @@ import com.defiancecraft.core.database.documents.DBUser;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+import com.mongodb.WriteResult;
 
 public class Users extends Collection {
 
@@ -116,9 +116,9 @@ public class Users extends Collection {
 	 * 
 	 * @param user User to save
 	 * @throws MongoException Thrown if a database error occurs
-	 * @return The ObjectId of new user (can be null)
+	 * @return WriteResult
 	 */
-	public ObjectId createUser(DBUser user) throws MongoException {
+	public WriteResult createUser(DBUser user) throws MongoException {
 		
 		return this.save(user);
 		

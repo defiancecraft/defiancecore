@@ -1,7 +1,5 @@
 package com.defiancecraft.core.database.collections;
 
-import org.bson.types.ObjectId;
-
 import com.defiancecraft.core.database.Database;
 import com.defiancecraft.core.database.documents.Document;
 import com.mongodb.DB;
@@ -59,15 +57,12 @@ public abstract class Collection {
 	 * 
 	 * @param doc Document to save
 	 * @throws MongoException Thrown if a database error occurs
-	 * @return The upserted ObjectId, or null if it does not exist.
+	 * @return WriteResult
 	 */
-	public ObjectId save(Document doc) throws MongoException {
+	public WriteResult save(Document doc) throws MongoException {
 		
 		DBObject obj = doc.getDBO();
-		WriteResult res = getDBC().save(obj);
-		Object id = res.getUpsertedId();
-		
-		return id != null && id instanceof ObjectId ? (ObjectId)id : null;
+		return getDBC().save(obj);
 		
 	}
 	
