@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 
-import com.mongodb.MongoSocketException;
+import com.mongodb.MongoException;
 
 /**
  * Wrapper class for ThreadPoolExecutor (which is normally
@@ -55,23 +55,22 @@ public class DatabaseExecutorService extends ThreadPoolExecutor {
 					
 					return this.innerCall();
 					
-				} catch (MongoSocketException | IOException e) {
+				} catch (MongoException | IOException e) {
 					
 					Bukkit.getLogger().warning(String.format("Failed to connect to the database! Attempt #%d.", attempt++));
+					Thread.sleep(2000);
 					
 				} catch (Throwable t) {
 					
-					Bukkit.getLogger().severe(
-						"==================================\n" +
-						"=         CRITICAL ERROR         =\n" +
-						"==================================\n" +
-						"=  An exception occurred while   =\n" +
-						"=   performing a database task.  =\n" +
-						"==================================\n" +
-						"= Message: " + t.getMessage() + "\n" +
-	 					"= Exception Type: " + t.getClass().getCanonicalName() + "\n" +
-						"= Stack Trace:"
-	 				);
+					Bukkit.getLogger().severe("==================================");
+					Bukkit.getLogger().severe("=         CRITICAL ERROR         =");
+					Bukkit.getLogger().severe("==================================");
+					Bukkit.getLogger().severe("=  An exception occurred while   =");
+					Bukkit.getLogger().severe("=   performing a database task.  =");
+					Bukkit.getLogger().severe("==================================");
+					Bukkit.getLogger().severe("= Message: " + t.getMessage());
+					Bukkit.getLogger().severe("= Exception Type: " + t.getClass().getCanonicalName());
+					Bukkit.getLogger().severe("= Stack Trace:");
 					t.printStackTrace();
 					
 					throw t;
