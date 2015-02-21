@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bson.types.ObjectId;
 import org.bukkit.entity.Player;
 
 import com.defiancecraft.core.database.Database;
@@ -111,21 +112,15 @@ public class Users extends Collection {
 	}
 	
 	/**
-	 * Saves a user to the database, replacing
-	 * users with the same UUIID.
+	 * Saves a user to the database.
 	 * 
 	 * @param user User to save
 	 * @throws MongoException Thrown if a database error occurs
+	 * @return The ObjectId of new user (can be null)
 	 */
-	public void createUser(DBUser user) throws MongoException {
+	public ObjectId createUser(DBUser user) throws MongoException {
 		
-		DBUser existing = getByUUID(user.getUUID());
-		if (existing != null)
-			user.setId(existing.getId());
-		
-		Database.getExecutorService().submit(() -> {
-			this.save(user);
-		});
+		return this.save(user);
 		
 	}
 
