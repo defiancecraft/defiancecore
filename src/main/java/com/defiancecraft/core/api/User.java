@@ -9,6 +9,7 @@ import com.defiancecraft.core.util.UUIDUtils;
 import com.defiancecraft.core.util.UUIDUtils.UUIDResponse;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 
 /**
  * This class represents a User model, and presents
@@ -58,9 +59,10 @@ public class User {
 	 * the query (queries by ID of the user's DBUser)
 	 * 
 	 * @param group The group to add
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return Whether the group was added
 	 */
-	public boolean addGroup(String group) {
+	public boolean addGroup(String group) throws MongoException{
 		
 		DBObject query = generateQuery();
 		DBObject data  = new BasicDBObject("$addToSet", new BasicDBObject(DBUser.FIELD_GROUPS, group));
@@ -75,9 +77,10 @@ public class User {
 	 * the query (queries by ID of the user's DBUser)
 	 * 
 	 * @param group The group to remove
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return Whether the group was removed
 	 */
-	public boolean removeGroup(String group) {
+	public boolean removeGroup(String group) throws MongoException {
 		
 		DBObject query = generateQuery();
 		DBObject data  = new BasicDBObject("$pull", new BasicDBObject(DBUser.FIELD_GROUPS, group));
@@ -92,9 +95,10 @@ public class User {
 	 * null or empty, their custom prefix will be unset.
 	 * 
 	 * @param prefix Prefix to set (can be null)
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return Whether the prefix was set
 	 */
-	public boolean setPrefix(String prefix) {
+	public boolean setPrefix(String prefix) throws MongoException {
 			
 		prefix = prefix == null ? "" : prefix; // Prevent NPEs on BasicDBObject
 		
@@ -114,9 +118,10 @@ public class User {
 	 * null or empty, their custom suffix will be unset.
 	 * 
 	 * @param suffix Suffix to set (can be null)
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return Whether the suffix was set
 	 */
-	public boolean setSuffix(String suffix) {
+	public boolean setSuffix(String suffix) throws MongoException {
 		
 		suffix = suffix == null ? "" : suffix; // Prevent NPEs on BasicDBObject
 		
@@ -135,9 +140,10 @@ public class User {
 	 * database.
 	 * 
 	 * @param balance New balance of user
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return Whether the user's balance was set
 	 */
-	public boolean setBalance(double balance) {
+	public boolean setBalance(double balance) throws MongoException {
 		
 		DBObject query = generateQuery();
 		DBObject data  = new BasicDBObject("$set", new BasicDBObject(DBUser.FIELD_BALANCE, balance));
@@ -155,10 +161,11 @@ public class User {
 	 * queries and one database insert.
 	 * 
 	 * @param name Name of user
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return User object representing found user, or null
 	 * 		   if their username could not be resolved.
 	 */
-	public static User findByNameOrCreate(String name) {
+	public static User findByNameOrCreate(String name) throws MongoException {
 		
 		Users users = Database.getCollection(Users.class);
 		
@@ -199,9 +206,10 @@ public class User {
 	 * rather return null.
 	 * 
 	 * @param name Name of user to lookup
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return User object, or null
 	 */
-	public static User findByName(String name) {
+	 public static User findByName(String name) throws MongoException {
 		
 		Users users = Database.getCollection(Users.class);
 		
@@ -232,9 +240,10 @@ public class User {
 	 * null if they were not found in the DB.
 	 * 
 	 * @param uuid UUID of user to find
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return User object, or null
 	 */
-	public static User findByUUID(UUID uuid) {
+	public static User findByUUID(UUID uuid) throws MongoException {
 		
 		Users users = Database.getCollection(Users.class);
 		DBUser user = users.getByUUID(uuid);
@@ -244,7 +253,8 @@ public class User {
 	}
 	
 	/**
-	 * Checks whether a user exists.
+	 * Checks whether a user exists - will return false
+	 * on failure.
 	 * 
 	 * @param name Name of user
 	 * @return Whether they exist.
@@ -254,14 +264,19 @@ public class User {
 	public static boolean exists(String name) {
 		
 		Users users = Database.getCollection(Users.class);
-		DBUser user = users.getByName(name);
+		DBUser user;
+		
+		try {
+			user = users.getByName(name);
+		} catch (MongoException e) { return false; }
 		
 		return user != null;
 		
 	}
 	
 	/**
-	 * Checks whether a user exists.
+	 * Checks whether a user exists - will return false
+	 * on failure.
 	 * 
 	 * @param uuid UUID of user
 	 * @return Whether they exist.
@@ -269,7 +284,11 @@ public class User {
 	public static boolean exists(UUID uuid) {
 	
 		Users users = Database.getCollection(Users.class);
-		DBUser user = users.getByUUID(uuid);
+		DBUser user;
+		
+		try {
+			user = users.getByUUID(uuid);
+		} catch (MongoException e) { return false; }
 		
 		return user != null;
 		

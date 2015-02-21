@@ -19,6 +19,7 @@ import com.defiancecraft.core.database.collections.Users;
 import com.defiancecraft.core.database.documents.DBUser;
 import com.defiancecraft.core.permissions.PermissionConfig.Group;
 import com.defiancecraft.core.util.FileUtils;
+import com.mongodb.MongoException;
 
 public class PermissionManager {
 
@@ -210,13 +211,14 @@ public class PermissionManager {
 	 * or creating a player if necessary.
 	 * 
 	 * @param player Player to set permissions of
+	 * @throws MongoException Thrown if a database error occurs
 	 * @deprecated Unless wanting only to update the
 	 * permissions of a player and not metadata, the {@link #updatePlayer(Player)}
 	 * method should be used instead to avoid multiple DB
 	 * queries.
 	 */
 	@Deprecated
-	public void updatePermissions(Player player) {
+	public void updatePermissions(Player player) throws MongoException {
 		
 		Users users = Database.getCollection(Users.class);
 		DBUser user = users.getUserOrCreate(player);
@@ -270,8 +272,9 @@ public class PermissionManager {
 	 * metadata is null, and needs updating.
 	 *
 	 * @param player Player to update metadata of
+	 * @throws MongoException Thrown if a database error occurs 
 	 */
-	public void updateMetadata(Player player) {
+	public void updateMetadata(Player player) throws MongoException {
 		
 		DBUser user = Database
 				.getCollection(Users.class)
@@ -307,8 +310,9 @@ public class PermissionManager {
 	 * 
 	 * @param player Player to update
 	 * @param createUser Whether to create the user if they don't exist.
+	 * @throws MongoException Thrown if a database error occurs 
 	 */
-	public void updatePlayer(Player player, boolean createUser) {
+	public void updatePlayer(Player player, boolean createUser) throws MongoException {
 		
 		DBUser user;
 		
@@ -327,8 +331,9 @@ public class PermissionManager {
 	/**
 	 * Updates all players from the Database. Should be called
 	 * after a reload, or on enabling the plugin.
+	 * @throws MongoException Thrown if a database error occurs
 	 */
-	public void reload() {
+	public void reload() throws MongoException {
 		
 		for (Player p : Bukkit.getOnlinePlayers())
 			updatePlayer(p, false);

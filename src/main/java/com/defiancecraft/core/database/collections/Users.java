@@ -10,6 +10,7 @@ import com.defiancecraft.core.database.Database;
 import com.defiancecraft.core.database.documents.DBUser;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 
 public class Users extends Collection {
 
@@ -25,8 +26,9 @@ public class Users extends Collection {
 	
 	/**
 	 * @see Servers#findOne(DBObject)
+	 * @throws MongoException Thrown if a database error occurs
 	 */
-	public DBUser findOne(DBObject query) {
+	public DBUser findOne(DBObject query) throws MongoException {
 		DBObject obj = getDBC().findOne(query);
 		return obj == null ? null : new DBUser(obj);
 	}
@@ -35,9 +37,10 @@ public class Users extends Collection {
 	 * Finds a user by UUID
 	 * 
 	 * @param u UUID
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return DBUser or null
 	 */
-	public DBUser getByUUID(UUID u) {
+	public DBUser getByUUID(UUID u) throws MongoException {
 		return findOne(new BasicDBObject(DBUser.FIELD_UUID, u.toString()));
 	}
 	
@@ -52,9 +55,10 @@ public class Users extends Collection {
 	 * updated accordingly.
 	 * 
 	 * @param name Player's username
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return DBUser or null
 	 */
-	public DBUser getByName(String name) {
+	public DBUser getByName(String name) throws MongoException {
 		return findOne(new BasicDBObject(DBUser.FIELD_NAME, name));
 	}
 	
@@ -64,9 +68,10 @@ public class Users extends Collection {
 	 * action to complete if it needs to create a user.
 	 * 
 	 * @param p Player to get
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return DBUser
 	 */
-	public DBUser getUserOrCreate(Player p) {
+	public DBUser getUserOrCreate(Player p) throws MongoException {
 		
 		return getUserOrCreate(p.getName(), p.getUniqueId());
 		
@@ -79,9 +84,10 @@ public class Users extends Collection {
 	 * 
 	 * @param name Name of player
 	 * @param uuid UUID of player
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return DBUser
 	 */
-	public DBUser getUserOrCreate(String name, UUID uuid) {
+	public DBUser getUserOrCreate(String name, UUID uuid) throws MongoException {
 		
 		DBUser user = getByUUID(uuid);
 		if (user != null)
@@ -109,8 +115,9 @@ public class Users extends Collection {
 	 * users with the same UUIID.
 	 * 
 	 * @param user User to save
+	 * @throws MongoException Thrown if a database error occurs
 	 */
-	public void createUser(DBUser user) {
+	public void createUser(DBUser user) throws MongoException {
 		
 		DBUser existing = getByUUID(user.getUUID());
 		if (existing != null)

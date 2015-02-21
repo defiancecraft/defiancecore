@@ -99,18 +99,31 @@ public class Economy {
 	
 	/**
 	 * Deposits an amount of money to a player.
+	 * Will create the player if they don't exist (note - this
+	 * will mean that a request is sent to Mojang, which could
+	 * take a while)
 	 * 
 	 * @param name Name of player whose account the money should be deposited into
 	 * @param amount Amount of money to deposit
-	 * @throws UserNotFoundException Thrown when the target user does not exist.
 	 */
-	public static void deposit(String name, double amount) throws UserNotFoundException {
+	public static void deposit(String name, double amount) {
 		
 		// Withdraw negative-amount in order to add the money
 		// into their account, rather than withdraw it.
 		try {
+			
 			Economy.withdraw(name, -amount);
-		} catch (InsufficientFundsException e) {}
+			
+		} catch (InsufficientFundsException e) { // Should never be thrown, unless given amount is negative.
+		} catch (UserNotFoundException e) {
+			
+			// Deposit directly through User class in order to
+			// avoid multiple unnecessary queries (createAccount
+			// + withdraw is three queries)
+			User u = User.findByNameOrCreate(name);
+			u.setBalance(u.getDBU().getBalance() + amount);
+			
+		}
 		
 	}
 	

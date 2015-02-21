@@ -17,6 +17,7 @@ import com.defiancecraft.core.permissions.PermissionConfig;
 import com.defiancecraft.core.permissions.PermissionManager;
 import com.defiancecraft.core.permissions.PermissionConfig.Group;
 import com.defiancecraft.core.util.RegexUtils;
+import com.mongodb.MongoException;
 
 public class PermissionCommands {
 
@@ -409,10 +410,16 @@ public class PermissionCommands {
 		
 		PermissionManager pm = DefianceCore.getPermissionManager();
 		pm.reloadConfig();
-		pm.reload();
+		
+		try {
+			pm.reload();
+		} catch (MongoException e) {
+			sender.sendMessage(ChatColor.RED + "A database error occurred while trying to reload permissions!");
+			e.printStackTrace();
+			return true;
+		}
 		
 		sender.sendMessage(ChatColor.GREEN + "Reloaded permissions from file and database.");
-		
 		return true;
 		
 	}

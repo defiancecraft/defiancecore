@@ -5,6 +5,7 @@ import com.defiancecraft.core.database.documents.Document;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 import com.mongodb.WriteResult;
 
 public abstract class Collection {
@@ -55,8 +56,9 @@ public abstract class Collection {
 	 * Saves a document in the collection
 	 * 
 	 * @param doc Document to save
+	 * @throws MongoException Thrown if a database error occurs
 	 */
-	public void save(Document doc) {
+	public void save(Document doc) throws MongoException {
 		
 		DBObject obj = doc.getDBO();
 		getDBC().save(obj);
@@ -68,9 +70,10 @@ public abstract class Collection {
 	 * 
 	 * @param query Query for document to update
 	 * @param data Update data
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return WriteResult
 	 */
-	public WriteResult update(DBObject query, DBObject data) {
+	public WriteResult update(DBObject query, DBObject data) throws MongoException {
 		
 		return getDBC().update(query, data);
 		
@@ -81,9 +84,10 @@ public abstract class Collection {
 	 * 
 	 * @param query Query for document to update
 	 * @param data Update data
+	 * @throws MongoException Thrown if a database error occurs
 	 * @return WriteResult
 	 */
-	public WriteResult updateMulti(DBObject query, DBObject data) {
+	public WriteResult updateMulti(DBObject query, DBObject data) throws MongoException {
 		
 		return getDBC().updateMulti(query, data);
 		
