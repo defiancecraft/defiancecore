@@ -2,8 +2,6 @@ package com.defiancecraft.core.api;
 
 import java.util.UUID;
 
-import org.bson.types.ObjectId;
-
 import com.defiancecraft.core.database.Database;
 import com.defiancecraft.core.database.collections.Users;
 import com.defiancecraft.core.database.documents.DBUser;
@@ -195,12 +193,7 @@ public class User {
 		
 		// Plan C: Create new user with their UUID and name
 		user = new DBUser(uuidRes.getUUID(), name);
-		ObjectId id;
-		
-		if ((id = users.createUser(user)) == null)
-			throw new MongoException("Failed to create new user.");
-		else
-			user.setId(id);
+		users.createUser(user);
 		
 		return new User(user);
 		
