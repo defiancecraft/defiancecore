@@ -57,7 +57,8 @@ public class DatabaseExecutorService extends ThreadPoolExecutor {
 					
 				} catch (MongoException | IOException e) {
 					
-					Bukkit.getLogger().warning(String.format("Failed to connect to the database! Attempt #%d.", attempt++));
+					Bukkit.getLogger().warning(String.format("A database error occurred with message: '%s'", e.getMessage()));
+					Bukkit.getLogger().warning(String.format("Retrying in 2 seconds. Attempt #%d.", attempt++));
 					Thread.sleep(2000);
 					
 				} catch (Throwable t) {
