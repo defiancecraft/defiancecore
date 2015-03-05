@@ -139,7 +139,8 @@ public class Economy {
 			// avoid multiple unnecessary queries (createAccount
 			// + withdraw is three queries)
 			User u = User.findByNameOrCreate(name);
-			u.setBalance(u.getDBU().getBalance() + amount);
+			if (u != null)
+				u.setBalance(u.getDBU().getBalance() + amount);
 			
 		}
 		
