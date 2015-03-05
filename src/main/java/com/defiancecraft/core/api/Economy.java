@@ -1,5 +1,7 @@
 package com.defiancecraft.core.api;
 
+import java.util.UUID;
+
 import com.archeinteractive.defiancetools.util.JsonConfig;
 import com.defiancecraft.core.util.FileUtils;
 
@@ -77,6 +79,22 @@ public class Economy {
 	}
 	
 	/**
+	 * Gets the balance of a player
+	 * 
+	 * @param uuid UUID of player
+	 * @return Player's balance
+	 */
+	public static double getBalance(UUID uuid) {
+		
+		User u = User.findByUUID(uuid);
+		if (u == null)
+			return 0d;
+		
+		return u.getDBU().getBalance();
+		
+	}
+	
+	/**
 	 * Withdraws an amount of money from the player.
 	 * 
 	 * @param name Name of player to withdraw money from
@@ -124,6 +142,16 @@ public class Economy {
 			u.setBalance(u.getDBU().getBalance() + amount);
 			
 		}
+		
+	}
+	
+	public static void setBalance(String name, double amount) throws UserNotFoundException {
+		
+		User u = User.findByNameOrCreate(name);
+		if (u == null)
+			throw new UserNotFoundException();
+		
+		u.setBalance(amount);
 		
 	}
 	
