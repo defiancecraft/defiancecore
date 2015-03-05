@@ -4,6 +4,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.archeinteractive.defiancetools.util.command.CommandRegistry;
+import com.defiancecraft.core.commands.EconomyCommands;
 import com.defiancecraft.core.commands.PermissionCommands;
 import com.defiancecraft.core.database.Database;
 import com.defiancecraft.core.listeners.ChatListener;
@@ -67,7 +68,8 @@ public class DefianceCore extends JavaPlugin {
 	public void onDisable() {
 
 		// Remove all PermissionAttachments
-		manager.removeAllAttachments();
+		if (manager != null)
+			manager.removeAllAttachments();
 		
 		// Shutdown ExecutorService
 		Database.shutdownExecutorService();
@@ -76,6 +78,7 @@ public class DefianceCore extends JavaPlugin {
 	
 	private void registerCommands() {
 		
+		// Permission Commands
 		CommandRegistry.registerUniversalCommand(this, "perm", "defiancecraft.perm.*", PermissionCommands::help);
 		CommandRegistry.registerUniversalSubCommand("perm", "help", "defiancecraft.perm.help", PermissionCommands::help);
 		CommandRegistry.registerUniversalSubCommand("perm", "reload", "defiancecraft.perm.reload", PermissionCommands::reload);
@@ -89,6 +92,14 @@ public class DefianceCore extends JavaPlugin {
 		CommandRegistry.registerUniversalSubCommand("perm", "setgroupprefix", "defiancecraft.perm.setgroupprefix", (sender, args) -> PermissionCommands.setGroupMeta(sender, args, true));
 		CommandRegistry.registerUniversalSubCommand("perm", "setgroupsuffix", "defiancecraft.perm.setgroupsuffix", (sender, args) -> PermissionCommands.setGroupMeta(sender, args, false));
 		CommandRegistry.registerUniversalSubCommand("perm", "setpriority", "defiancecraft.perm.setpriority", PermissionCommands::setPriority);
+		
+		// Economy Commands
+		CommandRegistry.registerUniversalCommand(this, "eco", "defiancecraft.eco.*", EconomyCommands::help);
+		CommandRegistry.registerUniversalSubCommand("eco", "give", "defiancecraft.eco.give", EconomyCommands::give);
+		CommandRegistry.registerUniversalSubCommand("eco", "take", "defiancecraft.eco.take", EconomyCommands::take);
+		CommandRegistry.registerUniversalSubCommand("eco", "reset", "defiancecraft.eco.reset", EconomyCommands::reset);
+		CommandRegistry.registerPlayerCommand(this, "bal", "defiancecraft.eco.bal", EconomyCommands::bal);
+		CommandRegistry.registerPlayerCommand(this, "pay", "defiancecraft.eco.pay", EconomyCommands::pay);
 		
 	}
 	
