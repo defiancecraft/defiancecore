@@ -9,6 +9,7 @@ import com.defiancecraft.core.commands.PermissionCommands;
 import com.defiancecraft.core.database.Database;
 import com.defiancecraft.core.listeners.ChatListener;
 import com.defiancecraft.core.listeners.PermissionListener;
+import com.defiancecraft.core.listeners.PlayerDBUpdateListener;
 import com.defiancecraft.core.permissions.PermissionManager;
 
 public class DefianceCore extends JavaPlugin {
@@ -56,6 +57,7 @@ public class DefianceCore extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new PermissionListener(DefianceCore.manager), this);
 		pm.registerEvents(new ChatListener(DefianceCore.manager), this);
+		pm.registerEvents(new PlayerDBUpdateListener(), this);
 		
 		/*
 		 * Register commands

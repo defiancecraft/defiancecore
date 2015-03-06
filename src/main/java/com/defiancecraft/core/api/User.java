@@ -153,6 +153,23 @@ public class User {
 	}
 	
 	/**
+	 * Sets the name of a player by performing an update on the
+	 * database.
+	 * 
+	 * @param name New name of player
+	 * @return Whether the user's name was set successfully
+	 * @throws MongoException Thrown if a database error occurs
+	 */
+	public boolean setName(String name) throws MongoException {
+		
+		DBObject query = generateQuery();
+		DBObject data  = new BasicDBObject("$set", new BasicDBObject(DBUser.FIELD_NAME, name));
+		
+		return Database.getCollection(Users.class).update(query, data).getN() > 0;
+		
+	}
+	
+	/**
 	 * Finds a user by their name, checking database first,
 	 * then resorting to UUID lookup (via Mojang), and then
 	 * just creating the user, if they are still not found.
