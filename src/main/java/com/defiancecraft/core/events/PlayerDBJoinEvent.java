@@ -1,6 +1,7 @@
 package com.defiancecraft.core.events;
 
-import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.defiancecraft.core.api.User;
@@ -10,13 +11,26 @@ import com.defiancecraft.core.api.User;
  * populated user field in order to prevent multiple DB
  * queries from listeners.
  */
-public class PlayerDBJoinEvent extends PlayerJoinEvent {
+public class PlayerDBJoinEvent extends PlayerEvent {
 
+	private static HandlerList handlers = new HandlerList();
 	private User user;
+	private PlayerJoinEvent delegated;
 	
-	public PlayerDBJoinEvent(Player playerJoined, String joinMessage) {
-		super(playerJoined, joinMessage);
+	public PlayerDBJoinEvent(PlayerJoinEvent delegated) {
+		super(delegated.getPlayer());
+		this.delegated = delegated;
 	}
+	
+	/**
+	 * @see PlayerJoinEvent#getJoinMessage()
+	 */
+	public String getJoinMessage() { return delegated.getJoinMessage(); }
+	
+	/**
+	 * @see PlayerJoinEvent#setJoinMessage(String)
+	 */
+	public void setJoinMessage(String joinMessage) { delegated.setJoinMessage(joinMessage); }
 	
 	/**
 	 * Lazily populates a user field; upon first request, the
@@ -29,6 +43,14 @@ public class PlayerDBJoinEvent extends PlayerJoinEvent {
 		if (user == null)
 			user = User.findByUUID(this.getPlayer().getUniqueId());
 		return user;
+	}
+	
+	public HandlerList getHandlers() {
+		return handlers;
+	}
+	
+	public static HandlerList getHandlerList() {
+		return handlers;
 	}
 
 }
