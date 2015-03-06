@@ -62,6 +62,7 @@ public class PermissionCommands {
 		final String user      = parser.getString(1);
 		final String group     = parser.getString(2);
 		final UUID senderUUID  = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console  = !(sender instanceof Player);
 		
 		if (user.isEmpty() || group.isEmpty()) {
 			sender.sendMessage("Usage: /perm addgroup <user> <group>");
@@ -72,13 +73,13 @@ public class PermissionCommands {
 			
 			User u = User.findByNameOrCreate(user);
 			if (u == null) {
-				CommandUtils.trySend(senderUUID, "&cCould not find user with name '%s'", true, user);
+				CommandUtils.trySend(senderUUID, "&cCould not find user with name '%s'", console, user);
 				return;
 			}
 			
 			boolean added = u.addGroup(group);
 			if (!added) {
-				CommandUtils.trySend(senderUUID, "&cCould not add group to user; database error", true);
+				CommandUtils.trySend(senderUUID, "&cCould not add group to user; database error", console);
 				return;
 			}
 			
@@ -89,7 +90,7 @@ public class PermissionCommands {
 			if (target != null)
 				pm.updatePlayer(target, true);
 				
-			CommandUtils.trySend(senderUUID, "&aSuccessfully added group '%s' to user '%s'.", true, group, user);
+			CommandUtils.trySend(senderUUID, "&aSuccessfully added group '%s' to user '%s'.", console, group, user);
 			
 		});
 		
@@ -114,18 +115,19 @@ public class PermissionCommands {
 		final String user  = parser.getString(1);
 		final String group = parser.getString(2);
 		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console = !(sender instanceof Player);
 		
 		Database.getExecutorService().submit(() -> {
 			
 			User u = User.findByName(user);
 			if (u == null) {
-				CommandUtils.trySend(senderUUID, "&cCould not find user with name '%s'", true, user);
+				CommandUtils.trySend(senderUUID, "&cCould not find user with name '%s'", console, user);
 				return;
 			}
 			
 			boolean success = u.removeGroup(group);
 			if (!success) {
-				CommandUtils.trySend(senderUUID, "&cFailed to remove group '%s' from user '%s'", true, group, user);
+				CommandUtils.trySend(senderUUID, "&cFailed to remove group '%s' from user '%s'", console, group, user);
 				return;
 			}
 			
@@ -136,7 +138,7 @@ public class PermissionCommands {
 			if (target != null)
 				pm.updatePlayer(target, true);
 				
-			CommandUtils.trySend(senderUUID, "&aSuccessfully removed group '%s' from user '%s'.", true, group, user);
+			CommandUtils.trySend(senderUUID, "&aSuccessfully removed group '%s' from user '%s'.", console, group, user);
 			
 		});
 		
@@ -164,18 +166,19 @@ public class PermissionCommands {
 		final String user     = parser.getString(1);
 		final String meta     = parser.getString(2).equalsIgnoreCase("-") ? "" : parser.getString(2);
 		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console = !(sender instanceof Player);
 		
 		Database.getExecutorService().submit(() -> {
 		
 			User u = User.findByNameOrCreate(user);
 			if (u == null) {
-				CommandUtils.trySend(senderUUID, "&cCould not find user with name '%s'", true, user);
+				CommandUtils.trySend(senderUUID, "&cCould not find user with name '%s'", console, user);
 				return;
 			}
 			
 			boolean success = prefix ? u.setPrefix(meta) : u.setSuffix(meta);
 			if (!success) {
-				CommandUtils.trySend(senderUUID, "&cFailed to set %s '%s' for user '%s'.", true, friendly, meta, user);
+				CommandUtils.trySend(senderUUID, "&cFailed to set %s '%s' for user '%s'.", console, friendly, meta, user);
 				return;
 			}
 			
@@ -292,7 +295,6 @@ public class PermissionCommands {
 	}
 	
 	// @see #setUserMeta(CommandSender, String[] boolean)
-	// TODO
 	public static boolean setGroupMeta(CommandSender sender, String[] args, boolean prefix) {
 		
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.WORD, Argument.WORD);
@@ -324,7 +326,7 @@ public class PermissionCommands {
 	/*
 	 * Command:    /perm setpriority <group> <priority>
 	 * Permission: defiancecraft.perm.setpriority
-	 */ //TODO
+	 */
 	public static boolean setPriority(CommandSender sender, String[] args) {
 	
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.WORD, Argument.INTEGER);
