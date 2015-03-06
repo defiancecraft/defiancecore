@@ -93,7 +93,7 @@ public class EconomyCommands {
 			
 		});
 		
-		sender.sendMessage(String.format(ChatColor.GRAY + "Giving %s %s.", user, Economy.format(amount)));
+		sender.sendMessage(String.format(ChatColor.GRAY + "Taking %s from %s.", Economy.format(amount), user));
 		return true;
 		
 	}
