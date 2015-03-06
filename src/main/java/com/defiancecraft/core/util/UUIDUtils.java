@@ -20,7 +20,8 @@ public class UUIDUtils {
 
 	private static final String URL_UUID = "https://api.mojang.com/users/profiles/minecraft/%s?at=%d";
 	private static final int MAX_ATTEMPTS = 5;
-	
+
+	private static long lastAttempt = System.currentTimeMillis();
 	private static Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 	
 	/**
@@ -58,6 +59,14 @@ public class UUIDUtils {
 			String urlStr = String.format(URL_UUID, username, timestamp);
 			URL url = new URL(urlStr);
 			
+			// Rate limiting :Z
+			if (System.currentTimeMillis() - lastAttempt < 1000) {
+				try {
+					Thread.sleep(1000 - (System.currentTimeMillis() - lastAttempt) + 100);
+				} catch (InterruptedException e) {}
+			}
+
+			UUIDUtils.lastAttempt = System.currentTimeMillis();
 			HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			conn.connect();
@@ -67,6 +76,13 @@ public class UUIDUtils {
 			switch (conn.getResponseCode()) {
 				case 204: return null; // 204 No Content - Player not found
 				case 400: return null; // 400 Bad Request - timestamp invalid
+				case 496: {
+					Bukkit.getLogger().warning("Being rate limited by Mojang servers, retrying in 1 second.");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {}
+					return getUUID(username, timestamp, attempts);
+				}
 				default: break;
 			}
 			
