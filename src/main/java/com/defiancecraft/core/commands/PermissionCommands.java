@@ -37,9 +37,9 @@ public class PermissionCommands {
 			"&b- /perm creategroup <group>\n" +
 			"&b- /perm addperm <group> <perm>\n" +
 			"&b- /perm remperm <group> <perm>\n" +
-			"&b- /perm setgroupprefix <group> [prefix]\n" +
-			"&b- /perm setgroupsuffix <group> [suffix]\n" +
-			"&b- /perm setpriority <group> [priority]\n"
+			"&b- /perm setgroupprefix <group> <prefix|->\n" +
+			"&b- /perm setgroupsuffix <group> <suffix|->\n" +
+			"&b- /perm setpriority <group> <priority>\n"
 		));
 	
 		return true;
@@ -157,12 +157,12 @@ public class PermissionCommands {
 		final String friendly = prefix ? "prefix" : "suffix"; // Friendly name for prefix/suffix, for reference in messages
 		
 		if (!parser.isValid()) {
-			sender.sendMessage(String.format("Usage: /perm setuser%s <user> [prefix]", friendly));
+			sender.sendMessage(String.format("Usage: /perm setuser%s <user> <prefix|->", friendly));
 			return true;
 		}
 		
 		final String user     = parser.getString(1);
-		final String meta     = parser.getString(2);
+		final String meta     = parser.getString(2).equalsIgnoreCase("-") ? "" : parser.getString(2);
 		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
 		
 		Database.getExecutorService().submit(() -> {
@@ -292,18 +292,19 @@ public class PermissionCommands {
 	}
 	
 	// @see #setUserMeta(CommandSender, String[] boolean)
+	// TODO
 	public static boolean setGroupMeta(CommandSender sender, String[] args, boolean prefix) {
 		
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.WORD, Argument.WORD);
 		String friendly  	  = prefix ? "prefix" : "suffix"; // Friendly name for prefix/suffix, for reference in messages
 		
 		if (!parser.isValid()) {
-			sender.sendMessage(String.format("Usage: /perm set%1$s <group> [%1$s]", friendly));
+			sender.sendMessage(String.format("Usage: /perm set%1$s <group> <%1$s|->", friendly));
 			return true;
 		}
 		
 		String groupName = parser.getString(1);
-		String meta      = parser.getString(2); // The new prefix or suffix to set
+		String meta      = parser.getString(2).equalsIgnoreCase("-") ? "" :parser.getString(2); // The new prefix or suffix to set
 		
 		// Attempt to set the prefix/suffix.
 		PermissionManager pm = DefianceCore.getPermissionManager();
@@ -323,7 +324,7 @@ public class PermissionCommands {
 	/*
 	 * Command:    /perm setpriority <group> <priority>
 	 * Permission: defiancecraft.perm.setpriority
-	 */
+	 */ //TODO
 	public static boolean setPriority(CommandSender sender, String[] args) {
 	
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.WORD, Argument.INTEGER);
