@@ -180,7 +180,7 @@ public class Economy {
 		return config;
 	}
 	
-	public class EconomyConfig extends JsonConfig {
+	public static class EconomyConfig extends JsonConfig {
 		
 		public String currencySingular = "token";
 		public String currencyPlural = "tokens";
