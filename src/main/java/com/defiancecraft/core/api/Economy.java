@@ -1,5 +1,7 @@
 package com.defiancecraft.core.api;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 import com.archeinteractive.defiancetools.util.JsonConfig;
@@ -22,7 +24,8 @@ public class Economy {
 	
 	/**
 	 * Formats an amount of currency to the format
-	 * set in the configuration
+	 * set in the configuration and rounds the amount
+	 * to 1 decimal place.
 	 * 
 	 * @param amount Amount of currency
 	 * @return Formatted amount
@@ -30,7 +33,7 @@ public class Economy {
 	public static String format(double amount) {
 		return getConfig().format
 			.replace("{symbol}", config.currencySymbol)
-			.replace("{amount}", Double.toString(amount));
+			.replace("{amount}", Double.toString(new BigDecimal(amount).setScale(1, RoundingMode.HALF_UP).doubleValue()));
 	}
 	
 	/**
