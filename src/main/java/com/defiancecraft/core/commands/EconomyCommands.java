@@ -50,11 +50,12 @@ public class EconomyCommands {
 		final String user      = parser.getString(1);
 		final double amount    = parser.getDouble(2);
 		final UUID senderUUID  = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console = !(sender instanceof Player);
 		
 		Database.getExecutorService().submit(() -> {
 			
 			Economy.deposit(user, amount);
-			CommandUtils.trySend(senderUUID, "&aFunds added.", true);
+			CommandUtils.trySend(senderUUID, "&aFunds added.", console);
 			
 		});
 		
@@ -79,16 +80,17 @@ public class EconomyCommands {
 		final String user      = parser.getString(1);
 		final double amount    = parser.getDouble(2);
 		final UUID senderUUID  = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console  = !(sender instanceof Player);
 		
 		Database.getExecutorService().submit(() -> {
 			
 			try {
 				Economy.withdraw(user, amount);
-				CommandUtils.trySend(senderUUID, "&aFunds added.", true);
+				CommandUtils.trySend(senderUUID, "&aFunds added.", console);
 			} catch (InsufficientFundsException e) {
-				CommandUtils.trySend(senderUUID, "&cPlayer does not have enough money.", true);
+				CommandUtils.trySend(senderUUID, "&cPlayer does not have eough money.", console);
 			} catch (UserNotFoundException e) {
-				CommandUtils.trySend(senderUUID, "&cPlayer not found.", true);
+				CommandUtils.trySend(senderUUID, "&cPlayer not found.", console);
 			}
 			
 		});
@@ -111,16 +113,17 @@ public class EconomyCommands {
 			return true;
 		}
 		
-		final String user = parser.getString(1);
+		final String user     = parser.getString(1);
 		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console = !(sender instanceof Player);
 		
 		Database.getExecutorService().submit(() -> {
 
 			try {
 				Economy.setBalance(user, 0);
-				CommandUtils.trySend(senderUUID, "&aReset user's balance.", false);
+				CommandUtils.trySend(senderUUID, "&aReset user's balance.", console);
 			} catch (UserNotFoundException e) {
-				CommandUtils.trySend(senderUUID, "&cPlayer not found.", false);
+				CommandUtils.trySend(senderUUID, "&cPlayer not found.", console);
 			}
 			
 		});
@@ -137,14 +140,48 @@ public class EconomyCommands {
 	public static boolean bal(CommandSender sender, String[] args) {
 		
 		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console = !(sender instanceof Player);
 		
 		Database.getExecutorService().submit(() -> {
 			
 			double balance = Economy.getBalance(senderUUID);
-			CommandUtils.trySend(senderUUID, "&aBalance: %s", false, Economy.format(balance));
+			CommandUtils.trySend(senderUUID, "&aBalance: %s", console, Economy.format(balance));
 			
 		});
 	
+		return true;
+		
+	}
+	
+	/*
+	 * Command:    /balother
+	 * Permission: defiancecraft.balother
+	 */
+	public static boolean balother(CommandSender sender, String[] args) {
+	
+		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME);
+		
+		if (!parser.isValid()) {
+			sender.sendMessage("Usage: /balother <user>");
+			
+		}
+		
+		final String user     = parser.getString(1);
+		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console = !(sender instanceof Player);
+		
+		Database.getExecutorService().submit(() -> {
+			
+			User u = User.findByName(user);
+			if (u == null) {
+				CommandUtils.trySend(senderUUID, "&cUser '%s' not found.", console, user);
+				return;
+			}
+			
+			CommandUtils.trySend(senderUUID, "&aBalance: %s", console, Economy.format(u.getDBU().getBalance())); 
+			
+		});
+		
 		return true;
 		
 	}
@@ -166,12 +203,13 @@ public class EconomyCommands {
 		final double amount     = parser.getDouble(2);
 		final String senderName = sender.getName();
 		final UUID senderUUID   = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console   = !(sender instanceof Player);
 		
 		Database.getExecutorService().submit(() -> {
 
 			User u = User.findByNameOrCreate(user);
 			if (u == null) {
-				CommandUtils.trySend(senderUUID, "&cUser %s not found.", false, user);
+				CommandUtils.trySend(senderUUID, "&cUser %s not found.", console, user);
 				return;
 			}
 			
@@ -179,13 +217,13 @@ public class EconomyCommands {
 				
 				Economy.withdraw(senderName, amount);
 				u.setBalance(u.getDBU().getBalance() + amount);
-				CommandUtils.trySend(senderUUID, "&aSent %s to %s!", false, Economy.format(amount), user);
+				CommandUtils.trySend(senderUUID, "&aSent %s to %s!", console, Economy.format(amount), user);
 				
 			} catch (UserNotFoundException e) {
-				CommandUtils.trySend(senderUUID, "&cA database error occurred.", false);
+				CommandUtils.trySend(senderUUID, "&cA database error occurred.", console);
 				return;
 			} catch (InsufficientFundsException e) {
-				CommandUtils.trySend(senderUUID, "&cYou do not have enough money.", false);
+				CommandUtils.trySend(senderUUID, "&cYou do not have enough money.", console);
 				return;
 			}
 			
