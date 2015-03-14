@@ -1,21 +1,38 @@
 package com.defiancecraft.core;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.UnknownDependencyException;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.archeinteractive.defiancetools.util.JsonConfig;
 import com.archeinteractive.defiancetools.util.command.CommandRegistry;
 import com.defiancecraft.core.commands.EconomyCommands;
 import com.defiancecraft.core.commands.PermissionCommands;
 import com.defiancecraft.core.database.Database;
+import com.defiancecraft.core.database.collections.Collection;
 import com.defiancecraft.core.listeners.ChatListener;
 import com.defiancecraft.core.listeners.PermissionListener;
 import com.defiancecraft.core.listeners.PlayerDBJoinEventListener;
 import com.defiancecraft.core.listeners.PlayerDBUpdateListener;
+import com.defiancecraft.core.modules.Module;
+import com.defiancecraft.core.modules.ModuleConfig;
 import com.defiancecraft.core.permissions.PermissionManager;
+import com.defiancecraft.core.util.FileUtils;
 
 public class DefianceCore extends JavaPlugin {
 
 	private static PermissionManager manager;
+	private static ModuleConfig moduleConfig;
+	
+	// Array of Modules - are all assignable from Module class.
+	private List<Plugin> loadedModules = new ArrayList<Plugin>();
 	
 	public void onEnable() {
 		
@@ -66,11 +83,19 @@ public class DefianceCore extends JavaPlugin {
 		 */
 		
 		this.registerCommands();
+	
+		/*
+		 * Load modules
+		 */
+		this.loadModules();
 		
 	}
 	
 	public void onDisable() {
 
+		// Disable all modules
+		this.unloadModules();
+		
 		// Remove all PermissionAttachments
 		if (manager != null)
 			manager.removeAllAttachments();
@@ -108,6 +133,102 @@ public class DefianceCore extends JavaPlugin {
 		
 	}
 	
+	private void loadModules() {
+		
+		ModuleConfig config = DefianceCore.getModuleConfig();
+		
+		// Plugin loader to load the module
+		PluginLoader loader = this.getPluginLoader();
+		
+		for (String moduleName : config.enabledModules) {
+			
+			File moduleFile = new File(FileUtils.getModulesDirectory(), String.format("%s.dc.jar", moduleName));
+			
+			// Check that the module file exists.
+			if (!moduleFile.exists() || !moduleFile.isFile()) {
+				getLogger().severe(String.format("[Modules] Failed to find module '%s'! File not found.", moduleName));
+				continue;
+			}
+			
+			Plugin modulePlugin;
+			
+			// Load the module using JavaPluginLoader
+			try {
+				modulePlugin = loader.loadPlugin(moduleFile);
+			} catch (UnknownDependencyException | InvalidPluginException e) {
+				getLogger().severe(
+						String.format(
+								"[Modules] Failed to load module '%s'! %s: %s",
+								moduleName,
+								e.getClass().getSimpleName(),
+								e.getMessage()));
+				continue;
+			}
+			
+			// Check that it implements Module
+			if (!(modulePlugin instanceof Module)) {
+				getLogger().severe(String.format("[Modules] Module '%s' does not extend Module class. Skipping module.", moduleName));
+				continue;
+			}
+
+			loadedModules.add(modulePlugin);
+			
+			// Register any Collections it needs
+			Module module = (Module)modulePlugin;
+			for (Collection c : module.getCollections())
+				Database.registerCollection(c);
+			
+			// Now attempt to enable the module!
+			getLogger().info(String.format("[Modules] Enabling module '%s'...", module.getCanonicalName()));
+			loader.enablePlugin(modulePlugin);
+			
+		}
+		
+	}
+
+	/**
+	 * Unloads all loaded modules.
+	 */
+	private void unloadModules() {
+		
+		PluginLoader loader = this.getPluginLoader();
+		
+		for (Plugin module : loadedModules) {
+			getLogger().info(String.format("[Modules] Disabling module '%s'...", ((Module)module).getCanonicalName()));
+			loader.disablePlugin(module);
+		}
+		
+		loadedModules.clear();
+		
+	}
+	
+	/**
+	 * Gets/loads the module configuration.
+	 * @return ModuleConfig
+	 */
+	public static ModuleConfig getModuleConfig() {
+		
+		if (DefianceCore.moduleConfig == null)
+			reloadModuleConfig();
+		
+		return DefianceCore.moduleConfig;
+		
+	}
+	
+	/**
+	 * Reloads the module config from file.
+	 */
+	public static void reloadModuleConfig() {
+		DefianceCore.moduleConfig = JsonConfig.load(FileUtils.getSharedConfig("modules.json"), ModuleConfig.class);
+	}
+	
+	/**
+	 * Gets the shared PermissionManager, for use by plugins
+	 * or internal classes without access to DefianceCore
+	 * instance.
+	 * 
+	 * @return PermissionManager
+	 */
 	public static PermissionManager getPermissionManager() {
 		
 		return manager;

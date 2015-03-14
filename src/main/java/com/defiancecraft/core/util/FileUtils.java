@@ -71,4 +71,21 @@ public class FileUtils {
 		
 	}
 	
+	/**
+	 * Gets a File object for the modules directory,
+	 * which is usually at /plugins/DefianceCraft/modules.
+	 * This method creates the directory if it is non-existent.
+	 * 
+	 * @return File representing the modules directory.
+	 */
+	public static File getModulesDirectory() {
+		
+		File dir = new File(getSharedDirectory(), "modules");
+		if (!dir.exists() || !dir.isDirectory())
+			dir.mkdirs();
+		
+		return dir;
+		
+	}
+	
 }
