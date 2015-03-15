@@ -1,5 +1,7 @@
 package com.defiancecraft.core.database;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ public class Database {
 	private static DB db;
 	private static Map<Class<? extends Collection>, Collection> collections = new HashMap<Class<? extends Collection>, Collection>();
 	private static ExecutorService execService;
+	private static boolean connected = false; // Whether reconnect() was called
 	
 	/**
 	 * Initializes the configuration and DB connection
@@ -128,6 +131,44 @@ public class Database {
 		if (obj == null)
 			throw new MongoException("Failed to verify server ID; is the server configured correctly?");
 		
+		// Set flag so newly registered collections can attempt
+		// to be created and indexed.
+		Database.connected = true;
+
+		// Update indexes of registered collections.
+		updateAllIndexes();
+		
+	}
+	
+	/**
+	 * Updates the indexes of all registered collections'
+	 * fields, if there are any present.
+	 */
+	public static void updateAllIndexes() {
+		for (Collection coll : Database.collections.values()) {
+			updateIndexes(coll);
+		}
+	}
+	
+	/**
+	 * Updates the indexes of a collection by calling
+	 * db.collection.createIndex(), if any are present.
+	 */
+	public static void updateIndexes(Collection coll) {
+		
+		for (Field field : coll.getClass().getDeclaredFields()) {
+			try {
+				if (Modifier.isStatic(field.getModifiers()) && field.isAnnotationPresent(UniqueField.class))
+					coll.getDBC().createIndex(
+						new BasicDBObject((String)field.get(null), 1),
+						new BasicDBObject("unique", true)
+					);
+			} catch (MongoException e) {
+				Bukkit.getLogger().warning(String.format("Database error while updating indexes of collection %s; stack trace below.", coll.getCollectionName()));
+				e.printStackTrace();
+			} catch (Exception e) { e.printStackTrace(); }
+		}
+		
 	}
 	
 	/**
@@ -156,7 +197,8 @@ public class Database {
 	
 	/**
 	 * Registers a collection so that it can be
-	 * retrieved using getCollection
+	 * retrieved using getCollection, and also creates
+	 * any necessary indexes.
 	 * 
 	 * @param c The collection instance to register
 	 * @see Database#getCollection(Class<? extends Collection>)
@@ -164,6 +206,8 @@ public class Database {
 	public static void registerCollection(Collection c) {
 		
 		collections.put(c.getClass(), c);
+		if (connected)
+			updateIndexes(c);
 		
 	}
 	
