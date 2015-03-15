@@ -271,6 +271,29 @@ public class User {
 	}
 	
 	/**
+	 * Attempts to find a user by their UUID, creating
+	 * one using the given name and UUID if they were
+	 * not found in the DB.
+	 * 
+	 * @param uuid UUID of user to find
+	 * @param name Name, for creation if they are not found
+	 * @return User object
+	 */
+	public static User findByUUIDOrCreate(UUID uuid, String name) {
+		
+		Users users = Database.getCollection(Users.class);
+		DBUser user = users.getByUUID(uuid);
+		
+		if (user == null) {
+			user = new DBUser(uuid, name);
+			users.createUser(user);
+		}
+		
+		return new User(user);
+		
+	}
+	
+	/**
 	 * Checks whether a user exists - will return false
 	 * on failure.
 	 * 
