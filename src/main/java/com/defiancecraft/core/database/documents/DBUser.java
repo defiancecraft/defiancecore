@@ -6,13 +6,11 @@ import java.util.List;
 import java.util.UUID;
 
 import com.defiancecraft.core.DefianceCore;
-import com.defiancecraft.core.database.UniqueField;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 public class DBUser extends Document {
 
-	@UniqueField
 	public static final String FIELD_UUID = "uuid";
 	public static final String FIELD_NAME = "name";
 	public static final String FIELD_GROUPS = "groups";

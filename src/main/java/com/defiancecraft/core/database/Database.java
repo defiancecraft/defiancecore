@@ -1,7 +1,5 @@
 package com.defiancecraft.core.database;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -156,17 +154,16 @@ public class Database {
 	 */
 	public static void updateIndexes(Collection coll) {
 		
-		for (Field field : coll.getClass().getDeclaredFields()) {
-			try {
-				if (Modifier.isStatic(field.getModifiers()) && field.isAnnotationPresent(UniqueField.class))
-					coll.getDBC().createIndex(
-						new BasicDBObject((String)field.get(null), 1),
-						new BasicDBObject("unique", true)
-					);
+		for (String field : coll.getUniqueFields()) {
+			try { 
+				coll.getDBC().createIndex(
+					new BasicDBObject(field, 1),
+					new BasicDBObject("unique", true)
+				);
 			} catch (MongoException e) {
-				Bukkit.getLogger().warning(String.format("Database error while updating indexes of collection %s; stack trace below.", coll.getCollectionName()));
+				Bukkit.getLogger().warning(String.format("Database error while updating indexes for collection '%s'. Stack trace below.", coll.getCollectionName()));
 				e.printStackTrace();
-			} catch (Exception e) { e.printStackTrace(); }
+			}
 		}
 		
 	}

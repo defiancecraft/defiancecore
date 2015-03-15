@@ -123,5 +123,12 @@ public class Users extends Collection {
 		return this.save(user);
 		
 	}
+	
+	@Override
+	public String[] getUniqueFields() {
+		return new String[] {
+			DBUser.FIELD_UUID	
+		};
+	}
 
 }

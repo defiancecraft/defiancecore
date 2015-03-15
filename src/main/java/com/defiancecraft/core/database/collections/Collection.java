@@ -94,4 +94,14 @@ public abstract class Collection {
 		
 	}
 	
+	/**
+	 * Gets a list of unique fields on the Collection (ones to
+	 * be indexed with db.collection.createIndex())
+	 * 
+	 * @return Array of field names that must be unique
+	 */
+	public String[] getUniqueFields() {
+		return new String[]{};
+	}
+	
 }
