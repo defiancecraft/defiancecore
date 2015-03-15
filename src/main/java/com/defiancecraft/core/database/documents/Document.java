@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 
 import com.mongodb.DBObject;
+import com.mongodb.DBRef;
 
 public class Document {
 
@@ -215,7 +217,7 @@ public class Document {
 		Object obj = dbo.get(field);
 		List<String> list = new ArrayList<String>();
 		
-		if (obj == null)
+		if (obj == null || !(obj instanceof List<?>))
 			return def;
 		
 		for (Object o : (List<?>)obj)
@@ -284,6 +286,165 @@ public class Document {
 			try {
 				return Double.parseDouble((String)obj);
 			} catch (NumberFormatException e) {}
+		
+		return def;
+		
+	}
+	
+	/**
+	 * Shortcut for {@link #getDBRef(String, DBRef)}, with
+	 * default as null.
+	 * 
+	 * @see #getDBRef(String, DBRef)
+	 */
+	protected DBRef getDBRef(String field) {
+		
+		return getDBRef(field, null);
+		
+	}
+	
+	/**
+	 * Retrieves a DBRef from the DBObject
+	 * 
+	 * @param field Field to get
+	 * @param def Default value if field is null
+	 * @return DBRef, or `def` on failure
+	 */
+	protected DBRef getDBRef(String field, DBRef def) {
+		
+		Object obj = dbo.get(field);
+		
+		if (obj instanceof DBRef)
+			return (DBRef)obj;
+		
+		return def;
+		
+	}
+	
+	/**
+	 * Shortcut for {@link #getDBObject(String, DBObject)}, with
+	 * default as null.
+	 * 
+	 * @see #getDBObject(String, DBObject)
+	 */
+	protected DBObject getDBObject(String field) {
+		
+		return getDBObject(field, null);
+		
+	}
+	
+	/**
+	 * Retrieves a DBObject (embedded document) from the DBObject
+	 * 
+	 * @param field Field to get
+	 * @param def Default value if field is null
+	 * @return DBObject, or `def` on failure
+	 */
+	protected DBObject getDBObject(String field, DBObject def) {
+		
+		Object obj = dbo.get(field);
+		
+		if (obj instanceof DBObject)
+			return (DBObject)obj;
+		
+		return def;
+		
+	}
+	
+	/**
+	 * Shortcut for {@link #getDBObjectList(String, List<DBObject>)}, with
+	 * default as null.
+	 * 
+	 * @see #getDBObjectList(String, List<DBObject>)
+	 */
+	protected List<DBObject> getDBObjectList(String field) {
+		
+		return getDBObjectList(field, new ArrayList<DBObject>());
+		
+	}
+	
+	/**
+	 * Retrieves a list of DBObjects (embedded documents) from the DBObject
+	 * 
+	 * @param field Field to get
+	 * @param def Default value if field is null
+	 * @return List<DBObject>, or `def` on failure
+	 */
+	protected List<DBObject> getDBObjectList(String field, List<DBObject> def) {
+		
+		Object obj = dbo.get(field);
+		List<DBObject> list = new ArrayList<DBObject>();
+		
+		if (obj == null || !(obj instanceof List<?>))
+			return def;
+		
+		for (Object o : (List<?>)obj)
+			if (o instanceof DBObject)
+				list.add((DBObject) o);
+		
+		return list;
+		
+	}
+
+	/**
+	 * Shortcut for {@link #getByte(String, byte)}, with
+	 * default as null.
+	 * 
+	 * @see #getByte(String, byte)
+	 */
+	protected byte getByte(String field) {
+		
+		return getByte(field, (byte)0);
+		
+	}
+	
+	/**
+	 * Retrieves a byte value from the DBObject
+	 * 
+	 * @param field Field to get
+	 * @param def Default value if field is null
+	 * @return byte, or `def` on failure
+	 */
+	protected byte getByte(String field, byte def) {
+		
+		Object obj = dbo.get(field);
+		
+		if (obj instanceof Number)
+			return ((Number)obj).byteValue();
+		else if (obj instanceof String)
+			try {
+				return Byte.parseByte((String)obj);
+			} catch (NumberFormatException e) {}
+		
+		return def;
+		
+	}
+	
+	/**
+	 * Shortcut for {@link #getByteArray(String, byte[])}, with
+	 * default as null.
+	 * 
+	 * @see #getByteArray(String, byte[])
+	 */
+	protected byte[] getByteArray(String field) {
+		
+		return getByteArray(field, new byte[]{});
+		
+	}
+	
+	/**
+	 * Retrieves a byte array from the DBObject
+	 * 
+	 * @param field Field to get
+	 * @param def Default value if field is null
+	 * @return byte[], or `def` on failure
+	 */
+	protected byte[] getByteArray(String field, byte[] def) {
+		
+		Object obj = dbo.get(field);
+		
+		if (obj instanceof Binary)
+			return ((Binary)obj).getData();
 		
 		return def;
 		
