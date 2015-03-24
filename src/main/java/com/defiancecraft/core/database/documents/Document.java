@@ -445,6 +445,8 @@ public class Document {
 		
 		if (obj instanceof Binary)
 			return ((Binary)obj).getData();
+		else if (obj instanceof byte[])
+			return ((byte[])obj);
 		
 		return def;
 		
