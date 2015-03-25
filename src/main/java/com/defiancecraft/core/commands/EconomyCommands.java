@@ -157,7 +157,7 @@ public class EconomyCommands {
 	 * Command:    /balother
 	 * Permission: defiancecraft.balother
 	 */
-	public static boolean balother(CommandSender sender, String[] args) {
+	public static boolean balOther(CommandSender sender, String[] args) {
 	
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME);
 		
