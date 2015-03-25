@@ -2,11 +2,10 @@ package com.defiancecraft.core.commands;
 
 import java.util.UUID;
 
-
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 
 import com.defiancecraft.core.api.Economy;
 import com.defiancecraft.core.api.Economy.InsufficientFundsException;
@@ -26,7 +25,8 @@ public class EconomyCommands {
 			"&b- /eco give <user> <amount>\n" +
 			"&b- /eco take <user> <amount>\n" +
 			"&b- /eco reset <user>\n" +
-			"&b- /bal [user]\n" +
+			"&b- /bal\n" +
+			"&b- /balother <user>\n" +
 			"&b- /pay <user> <amount>"
 		));
 		
@@ -217,6 +217,11 @@ public class EconomyCommands {
 				
 				Economy.withdraw(senderName, amount);
 				u.setBalance(u.getDBU().getBalance() + amount);
+				
+				if (u.getDBU().getUUID() != null
+						&& Bukkit.getPlayer(u.getDBU().getUUID()) != null)
+					Bukkit.getPlayer(u.getDBU().getUUID()).sendMessage(ChatColor.GREEN + senderName + " sent you " + Economy.format(amount) + "!");
+				
 				CommandUtils.trySend(senderUUID, "&aSent %s to %s!", console, Economy.format(amount), user);
 				
 			} catch (UserNotFoundException e) {
