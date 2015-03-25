@@ -46,7 +46,7 @@ public class DBUser extends Document {
 	
 	public List<String> getGroups() {
 		
-		List<String> groups = getStringList(FIELD_GROUPS);
+		List<String> groups = getStringList(FIELD_GROUPS, new ArrayList<String>());
 		
 		// Merge the default groups with the ones defined in DB
 		for (String group : DefianceCore.getPermissionManager().getConfig().defaultGroups)
