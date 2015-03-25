@@ -1,5 +1,6 @@
 package com.defiancecraft.core.commands;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -17,6 +18,7 @@ import com.defiancecraft.core.permissions.PermissionManager;
 import com.defiancecraft.core.util.CommandUtils;
 import com.mongodb.MongoException;
 
+
 public class PermissionCommands {
 
 	/*
@@ -32,6 +34,7 @@ public class PermissionCommands {
 			"&b- /perm remgroup <user> <group>\n" +
 			"&b- /perm setuserprefix <user> <prefix|->\n" +
 			"&b- /perm setusersuffix <user> <suffix|->\n" +
+			"&b- /perm groups <user>\n" +
 			"&3&oGroup Commands:\n" +
 			"&b- /perm reload\n" +
 			"&b- /perm creategroup <group>\n" +
@@ -349,6 +352,50 @@ public class PermissionCommands {
 			sender.sendMessage(ChatColor.GREEN + "Successfully set group priority.");
 			pm.saveConfig();
 		}
+		
+		return true;
+		
+	}
+	
+	/*
+	 * Command:	   /perm groups <user>
+	 * Permission: defiancecraft.perm.groups
+	 */
+	public static boolean groups(CommandSender sender, String[] args) {
+	
+		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME);
+		
+		if (!parser.isValid()) {
+			sender.sendMessage("Usage: /perm groups <user>");
+			return true;
+		}
+		
+		final String playerName = parser.getString(1);
+		final boolean console   = !(sender instanceof Player);
+		final UUID senderUUID   = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		
+		Database.getExecutorService().submit(() -> {
+			
+			User u = User.findByName(playerName);
+			if (u == null) {
+				CommandUtils.trySend(senderUUID, "&cUser not found", console);
+				return;
+			}
+			
+			List<String> groups = u.getDBU().getGroups();
+			StringBuilder builder = new StringBuilder();
+			builder.append("&9&l");
+			builder.append(playerName);
+			builder.append("'s Groups\n");
+			
+			for (String group : groups)
+				builder.append("&b- ")
+					.append(group)
+					.append("\n");
+			
+			CommandUtils.trySend(senderUUID, ChatColor.translateAlternateColorCodes('&', builder.toString()), console);
+			
+		});
 		
 		return true;
 		
