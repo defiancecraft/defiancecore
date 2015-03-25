@@ -1,6 +1,6 @@
 name: DefianceCore
 main: com.defiancecraft.core.DefianceCore
-version: 0.0.1
+version: 1.0.0
 depend: [DefianceTools]
 commands:
   perm:

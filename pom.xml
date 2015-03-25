@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.defiancecraft</groupId>
   <artifactId>DefianceCore</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>DefianceCore</name>
   <description>The core library for DCV4 using Bukkit</description>
   <build>
