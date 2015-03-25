@@ -20,7 +20,7 @@ public class PlayerDBUpdateListener implements Listener {
 		Database.getExecutorService().submit(() -> {
 			
 			User u = e.getUser();
-			if (u != null && !u.getDBU().getName().equals(currentName))
+			if (u != null && (u.getDBU().getName() == null || !u.getDBU().getName().equals(currentName)))
 				u.setName(currentName);
 			
 		});
