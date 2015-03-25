@@ -129,7 +129,7 @@ public class DefianceCore extends JavaPlugin {
 		CommandRegistry.registerUniversalSubCommand("eco", "reset", "defiancecraft.eco.reset", EconomyCommands::reset);
 		CommandRegistry.registerPlayerCommand(this, "bal", "defiancecraft.eco.bal", EconomyCommands::bal);
 		CommandRegistry.registerPlayerCommand(this, "pay", "defiancecraft.eco.pay", EconomyCommands::pay);
-		CommandRegistry.registerUniversalCommand(this, "balolther", "defiancecraft.eco.balother", EconomyCommands::balOther);
+		CommandRegistry.registerUniversalCommand(this, "balother", "defiancecraft.eco.balother", EconomyCommands::balOther);
 		
 	}
 	
