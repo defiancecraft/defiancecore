@@ -163,7 +163,7 @@ public class EconomyCommands {
 		
 		if (!parser.isValid()) {
 			sender.sendMessage("Usage: /balother <user>");
-			
+			return true;
 		}
 		
 		final String user     = parser.getString(1);
