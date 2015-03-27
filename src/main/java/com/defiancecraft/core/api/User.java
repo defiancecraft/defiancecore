@@ -2,6 +2,8 @@ package com.defiancecraft.core.api;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
 import com.defiancecraft.core.database.Database;
 import com.defiancecraft.core.database.collections.Users;
 import com.defiancecraft.core.database.documents.DBUser;
@@ -182,9 +184,18 @@ public class User {
 	 * @return User object representing found user, or null
 	 * 		   if their username could not be resolved.
 	 */
+	@SuppressWarnings("deprecation")
 	public static User findByNameOrCreate(String name) throws MongoException {
 		
 		Users users = Database.getCollection(Users.class);
+		
+		// In fact, try and find the Bukkit user and get their motherfucking UUID.
+		// This shit will save a lot of time.
+		if (Bukkit.getPlayer(name) != null) {
+			DBUser user = users.getByUUID(Bukkit.getPlayer(name).getUniqueId());
+			if (user != null)
+				return new User(user);
+		}
 		
 		// Plan A: Try and find them by name
 		DBUser user = users.getByName(name);
@@ -229,7 +240,23 @@ public class User {
 	 */
 	 public static User findByName(String name) throws MongoException {
 		
+		return User.findByName(name, UUIDUtils.DEFAULT_MAX_ATTEMPTS);
+		
+	}
+	 
+	// TODO doc
+	@SuppressWarnings("deprecation")
+	public static User findByName(String name, int maxAttempts) throws MongoException {
+		
 		Users users = Database.getCollection(Users.class);
+		
+		// In fact, try and find the Bukkit user and get their motherfucking UUID.
+		// This shit will save a lot of time.
+		if (Bukkit.getPlayer(name) != null) {
+			DBUser user = users.getByUUID(Bukkit.getPlayer(name).getUniqueId());
+			if (user != null)
+				return new User(user);
+		}
 		
 		// Plan A: Try and find them by name
 		DBUser user = users.getByName(name);
@@ -240,7 +267,7 @@ public class User {
 		// Get their UUID from Mojang, or return null
 		// if it wasn't found or some other error
 		// (see UUIDUtils#getUUID(String, long))
-		UUIDResponse uuidRes = UUIDUtils.getUUID(name, System.currentTimeMillis() / 1000);
+		UUIDResponse uuidRes = UUIDUtils.getUUID(name, System.currentTimeMillis() / 1000, maxAttempts);
 		if (uuidRes == null
 				|| uuidRes.name == null
 				|| uuidRes.name.isEmpty()

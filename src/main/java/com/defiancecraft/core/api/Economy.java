@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
 import com.archeinteractive.defiancetools.util.JsonConfig;
 import com.defiancecraft.core.util.FileUtils;
 
@@ -71,9 +73,20 @@ public class Economy {
 	 * @param name Name of player
 	 * @return Player's balance
 	 */
+	@SuppressWarnings("deprecation")
 	public static double getBalance(String name) {
 		
-		User u = User.findByName(name);
+		UUID uuid = null;
+		User u;
+		
+		if (Bukkit.getPlayer(name) != null)
+			uuid = Bukkit.getPlayer(name).getUniqueId();
+		
+		if (uuid != null)
+			u = User.findByUUID(uuid);
+		else
+			u = User.findByName(name, 1);
+			
 		if (u == null)
 			return 0d;
 		

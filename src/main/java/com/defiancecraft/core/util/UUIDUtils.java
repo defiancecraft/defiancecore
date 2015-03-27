@@ -19,7 +19,7 @@ import com.google.gson.GsonBuilder;
 public class UUIDUtils {
 
 	private static final String URL_UUID = "https://api.mojang.com/users/profiles/minecraft/%s?at=%d";
-	private static final int MAX_ATTEMPTS = 5;
+	public static final int DEFAULT_MAX_ATTEMPTS = 5;
 
 	private static long lastAttempt = System.currentTimeMillis();
 	private static Gson gson = new GsonBuilder().disableHtmlEscaping().create();
@@ -34,15 +34,38 @@ public class UUIDUtils {
 	 * - `timestamp` is invalid
 	 * - Could not find username
 	 * - There is an IOException
-	 * - Mojang server is unreachable after `MAX_ATTEMPTS` attempts.
+	 * - Mojang server is unreachable after `DEFAULT_MAX_ATTEMPTS` attempts.
 	 * 
 	 * @param username Username of user to resolve
 	 * @param timestamp Unix timestamp (without milliseconds)
 	 * @return UUIDResponse object, or null
 	 */
 	public static UUIDResponse getUUID(String username, long timestamp) {
+	
+		return getUUID(username, timestamp, DEFAULT_MAX_ATTEMPTS);
 		
-		return getUUID(username, timestamp, 0);
+	}
+	
+	/**
+	 * Attempts to resolve a UUID from a username
+	 * at the specified time by contacting Mojang.
+	 * Note that this does not run in a separate
+	 * thread - this should be handled by the caller.
+	 * 
+	 * Will return null if:
+	 * - `timestamp` is invalid
+	 * - Could not find username
+	 * - There is an IOException
+	 * - Mojang server is unreachable after `maxAttempts` attempts.
+	 * 
+	 * @param username Username of user to resolve
+	 * @param timestamp Unix timestamp (without milliseconds)
+	 * @param maxAttempts The number of times to attempt before giving up.
+	 * @return UUIDResponse object, or null
+	 */
+	public static UUIDResponse getUUID(String username, long timestamp, int maxAttempts) {
+		
+		return getUUID(username, timestamp, 0, maxAttempts);
 		
 	}
 	
@@ -52,7 +75,7 @@ public class UUIDUtils {
 	 * 
 	 * @see #getUUID(String, long)
 	 */
-	private static UUIDResponse getUUID(String username, long timestamp, int attempts) {
+	private static UUIDResponse getUUID(String username, long timestamp, int attempts, int maxAttempts) {
 		
 		try {
 			
@@ -104,7 +127,7 @@ public class UUIDUtils {
 		} catch (SocketTimeoutException e) {
 			
 			// Retry until MAX_ATTEMPTS is reached.
-			if (attempts < MAX_ATTEMPTS) {
+			if (attempts < maxAttempts) {
 				
 				Bukkit.getLogger().warning("Failed to reach Mojang servers, retrying in 5 seconds. Attempt #" + (++attempts));
 				
