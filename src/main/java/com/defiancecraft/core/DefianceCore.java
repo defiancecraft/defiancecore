@@ -4,6 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLoader;
@@ -13,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.archeinteractive.defiancetools.util.JsonConfig;
 import com.archeinteractive.defiancetools.util.command.CommandRegistry;
+import com.archeinteractive.defiancetools.util.command.VirtualCommand;
 import com.defiancecraft.core.commands.EconomyCommands;
 import com.defiancecraft.core.commands.PermissionCommands;
 import com.defiancecraft.core.database.Database;
@@ -102,6 +107,25 @@ public class DefianceCore extends JavaPlugin {
 		
 		// Shutdown ExecutorService
 		Database.shutdownExecutorService();
+		
+	}
+	
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+		
+		if (commandLabel == null || commandLabel.isEmpty())
+			return false;
+		
+		// Execute the VirtualCommand (or at least try to)
+		// This would occur if the execution was not directly
+		// by a player/console (i.e. BuyCraft)
+		VirtualCommand vc = CommandRegistry.getCommand(cmd.getName());
+		if (vc != null)
+			if (sender instanceof Player && vc.hasPlayerExecution())
+				return vc.invokePlayer((Player)sender, args);
+			else if (sender instanceof ConsoleCommandSender && vc.hasConsoleExecution())
+				return vc.invokeConsole((ConsoleCommandSender)sender, args);
+		
+		return false;
 		
 	}
 	

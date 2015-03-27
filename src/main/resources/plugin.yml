@@ -4,5 +4,8 @@ version: 1.0.0
 depend: [DefianceTools]
 commands:
   perm:
-    description: Main permissions command
-    usage: /perm
+  eco:
+  bal:
+  balother:
+  pay:
+  
