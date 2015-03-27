@@ -205,6 +205,11 @@ public class EconomyCommands {
 		final UUID senderUUID   = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
 		final boolean console   = !(sender instanceof Player);
 		
+		if (user.equalsIgnoreCase(sender.getName())) {
+			sender.sendMessage(ChatColor.RED + "Nice try.");
+			return true;
+		}
+		
 		Database.getExecutorService().submit(() -> {
 
 			User u = User.findByNameOrCreate(user);
