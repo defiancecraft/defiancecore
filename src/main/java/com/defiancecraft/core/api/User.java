@@ -191,8 +191,8 @@ public class User {
 		
 		// In fact, try and find the Bukkit user and get their motherfucking UUID.
 		// This shit will save a lot of time.
-		if (Bukkit.getPlayer(name) != null) {
-			DBUser user = users.getByUUID(Bukkit.getPlayer(name).getUniqueId());
+		if (Bukkit.getPlayerExact(name) != null) {
+			DBUser user = users.getByUUID(Bukkit.getPlayerExact(name).getUniqueId());
 			if (user != null)
 				return new User(user);
 		}
@@ -252,8 +252,8 @@ public class User {
 		
 		// In fact, try and find the Bukkit user and get their motherfucking UUID.
 		// This shit will save a lot of time.
-		if (Bukkit.getPlayer(name) != null) {
-			DBUser user = users.getByUUID(Bukkit.getPlayer(name).getUniqueId());
+		if (Bukkit.getPlayerExact(name) != null) {
+			DBUser user = users.getByUUID(Bukkit.getPlayerExact(name).getUniqueId());
 			if (user != null)
 				return new User(user);
 		}
