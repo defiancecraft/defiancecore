@@ -11,7 +11,8 @@ import com.defiancecraft.core.api.Economy;
 import com.defiancecraft.core.api.Economy.InsufficientFundsException;
 import com.defiancecraft.core.api.Economy.UserNotFoundException;
 import com.defiancecraft.core.api.User;
-import com.defiancecraft.core.commands.ArgumentParser.Argument;
+import com.defiancecraft.core.command.ArgumentParser;
+import com.defiancecraft.core.command.ArgumentParser.Argument;
 import com.defiancecraft.core.database.Database;
 import com.defiancecraft.core.util.CommandUtils;
 

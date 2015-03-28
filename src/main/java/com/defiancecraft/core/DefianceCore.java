@@ -16,6 +16,7 @@ import org.bukkit.plugin.UnknownDependencyException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.archeinteractive.defiancetools.util.JsonConfig;
+import com.archeinteractive.defiancetools.util.command.CommandListener;
 import com.archeinteractive.defiancetools.util.command.CommandRegistry;
 import com.archeinteractive.defiancetools.util.command.VirtualCommand;
 import com.defiancecraft.core.commands.EconomyCommands;
@@ -130,6 +131,11 @@ public class DefianceCore extends JavaPlugin {
 	}
 	
 	private void registerCommands() {
+		
+		// Setup the listener
+		CommandListener.setup(this);
+		
+		// TODO: move onCommand thing to command API
 		
 		// Permission Commands
 		CommandRegistry.registerUniversalCommand(this, "perm", "defiancecraft.perm.*", PermissionCommands::help);

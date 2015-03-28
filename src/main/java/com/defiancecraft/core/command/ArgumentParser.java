@@ -1,4 +1,4 @@
-package com.defiancecraft.core.commands;
+package com.defiancecraft.core.command;
 
 import java.util.ArrayList;
 import java.util.List;

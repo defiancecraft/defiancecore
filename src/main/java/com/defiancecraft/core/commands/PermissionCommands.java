@@ -10,7 +10,8 @@ import org.bukkit.entity.Player;
 
 import com.defiancecraft.core.DefianceCore;
 import com.defiancecraft.core.api.User;
-import com.defiancecraft.core.commands.ArgumentParser.Argument;
+import com.defiancecraft.core.command.ArgumentParser;
+import com.defiancecraft.core.command.ArgumentParser.Argument;
 import com.defiancecraft.core.database.Database;
 import com.defiancecraft.core.permissions.PermissionConfig;
 import com.defiancecraft.core.permissions.PermissionConfig.Group;
