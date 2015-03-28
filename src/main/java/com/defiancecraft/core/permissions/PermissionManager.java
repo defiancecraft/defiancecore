@@ -13,12 +13,12 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.Plugin;
 
-import com.archeinteractive.defiancetools.util.JsonConfig;
 import com.defiancecraft.core.database.Database;
 import com.defiancecraft.core.database.collections.Users;
 import com.defiancecraft.core.database.documents.DBUser;
 import com.defiancecraft.core.permissions.PermissionConfig.Group;
 import com.defiancecraft.core.util.FileUtils;
+import com.defiancecraft.core.util.JsonConfig;
 import com.mongodb.MongoException;
 
 public class PermissionManager {

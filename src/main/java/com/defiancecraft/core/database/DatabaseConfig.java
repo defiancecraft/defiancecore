@@ -1,6 +1,6 @@
 package com.defiancecraft.core.database;
 
-import com.archeinteractive.defiancetools.util.JsonConfig;
+import com.defiancecraft.core.util.JsonConfig;
 
 public class DatabaseConfig extends JsonConfig {
 

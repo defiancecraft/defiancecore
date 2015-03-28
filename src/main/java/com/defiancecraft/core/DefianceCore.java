@@ -15,10 +15,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.UnknownDependencyException;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.archeinteractive.defiancetools.util.JsonConfig;
-import com.archeinteractive.defiancetools.util.command.CommandListener;
-import com.archeinteractive.defiancetools.util.command.CommandRegistry;
-import com.archeinteractive.defiancetools.util.command.VirtualCommand;
+import com.defiancecraft.core.command.CommandListener;
+import com.defiancecraft.core.command.CommandRegistry;
+import com.defiancecraft.core.command.VirtualCommand;
 import com.defiancecraft.core.commands.EconomyCommands;
 import com.defiancecraft.core.commands.PermissionCommands;
 import com.defiancecraft.core.database.Database;
@@ -31,6 +30,7 @@ import com.defiancecraft.core.modules.Module;
 import com.defiancecraft.core.modules.ModuleConfig;
 import com.defiancecraft.core.permissions.PermissionManager;
 import com.defiancecraft.core.util.FileUtils;
+import com.defiancecraft.core.util.JsonConfig;
 
 public class DefianceCore extends JavaPlugin {
 

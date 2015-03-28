@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.UUID;
 
-import com.archeinteractive.defiancetools.util.JsonConfig;
 import com.defiancecraft.core.util.FileUtils;
+import com.defiancecraft.core.util.JsonConfig;
 
 /**
  * This class provides access to economy functions, such as

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.archeinteractive.defiancetools.util.JsonConfig;
+import com.defiancecraft.core.util.JsonConfig;
 
 public class PermissionConfig extends JsonConfig {
 

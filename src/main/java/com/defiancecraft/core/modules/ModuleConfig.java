@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.archeinteractive.defiancetools.util.JsonConfig;
+import com.defiancecraft.core.util.JsonConfig;
 import com.google.gson.JsonElement;
 
 public class ModuleConfig extends JsonConfig {

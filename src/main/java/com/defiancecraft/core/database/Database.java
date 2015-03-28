@@ -10,12 +10,12 @@ import java.util.concurrent.TimeUnit;
 import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
 
-import com.archeinteractive.defiancetools.util.JsonConfig;
 import com.defiancecraft.core.DefianceCore;
 import com.defiancecraft.core.database.collections.Collection;
 import com.defiancecraft.core.database.collections.Servers;
 import com.defiancecraft.core.database.collections.Users;
 import com.defiancecraft.core.util.FileUtils;
+import com.defiancecraft.core.util.JsonConfig;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBObject;
