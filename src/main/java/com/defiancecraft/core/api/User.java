@@ -39,7 +39,7 @@ public class User {
 	 * 
 	 * @return DBObject
 	 */
-	private DBObject generateQuery() {
+	public DBObject generateQuery() {
 		return new BasicDBObject(DBUser.FIELD_ID, dbu.getId());
 	}
 	
