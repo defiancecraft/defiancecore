@@ -75,9 +75,15 @@ public class UUIDUtils {
 	 * 
 	 * @see #getUUID(String, long)
 	 */
+	@SuppressWarnings("deprecation")
 	private static UUIDResponse getUUID(String username, long timestamp, int attempts, int maxAttempts) {
 		
 		try {
+			
+			// Attempt to get Bukkit player
+			if (Bukkit.getPlayerExact(username) != null) {
+				return new UUIDUtils.UUIDResponse(Bukkit.getPlayerExact(username).getUniqueId().toString(), username);
+			}
 			
 			String urlStr = String.format(URL_UUID, username, timestamp);
 			URL url = new URL(urlStr);
@@ -151,6 +157,12 @@ public class UUIDUtils {
 			e.printStackTrace();
 			return null;
 			
+		} catch (Exception e) {
+			
+			Bukkit.getLogger().severe("[CRITICAL ERROR] Exception while attempting to resolve UUID for '" + username + "'! UUID not resolved. Stack trace below.");
+			e.printStackTrace();
+			return null;
+			
 		}
 		
 		return null;
@@ -183,9 +195,14 @@ public class UUIDUtils {
 	 * A class representing a response from
 	 * Mojang for a UUID request.
 	 */
-	public class UUIDResponse {
+	public static class UUIDResponse {
 		
 		public String id, name, error, errorMessage;
+		
+		public UUIDResponse(String id, String name) {
+			this.id = id;
+			this.name = name;
+		}
 		
 		/**
 		 * Gets the UUID
