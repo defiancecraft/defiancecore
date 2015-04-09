@@ -62,6 +62,28 @@ public class DatabaseExecutorService extends ThreadPoolExecutor {
 					Thread.sleep(2000);
 					
 				} catch (Throwable t) {
+
+					if (t.getClass().getName().contains("CancelledPacketHandleException")) {
+						
+						Bukkit.getLogger().severe("==================================");
+						Bukkit.getLogger().severe("=  SUPER SPECIAL CRITICAL ERROR  =");
+						Bukkit.getLogger().severe("==================================");
+						Bukkit.getLogger().severe("= CancelledPacketHandleException =");
+						Bukkit.getLogger().severe("=      occurred in DB thread.    =");
+						Bukkit.getLogger().severe("==================================");
+						Bukkit.getLogger().severe("= Throwing made up Exception to  =");
+						Bukkit.getLogger().severe("= get an actual stack trace.     =");
+						Bukkit.getLogger().severe("= Stack Trace: ");
+						
+						try {
+							throw new Exception("Exception to see stack trace");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						
+						throw t;
+						
+					}
 					
 					Bukkit.getLogger().severe("==================================");
 					Bukkit.getLogger().severe("=         CRITICAL ERROR         =");
