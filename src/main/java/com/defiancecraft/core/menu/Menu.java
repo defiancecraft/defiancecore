@@ -183,7 +183,8 @@ public abstract class Menu implements InventoryHolder {
 	}
 	
 	/**
-	 * Opens the menu to the player
+	 * Opens the menu to the player. Note that this method should be
+	 * ran inside of a BukkitRunnable in order to avoid problems.
 	 * 
 	 * @param p Player to show menu to
 	 * @throws IllegalStateException if player is already viewing the menu.
@@ -208,7 +209,9 @@ public abstract class Menu implements InventoryHolder {
 	}
 	
 	/**
-	 * Switches from one menu to another for given viewer
+	 * Switches from one menu to another for given viewer.
+	 * Note: this does not need to be ran asynchronously (i.e. in a BukkitRunnable)
+	 * as this is included within the method.
 	 * 
 	 * @param viewer Viewer of the menu
 	 * @param from Menu to switch from
