@@ -172,9 +172,6 @@ public class CommandRegistry {
      */
     private static void registerVirtualCommand(String label, VirtualCommand v) {
     	
-    	if (CommandListener.getInstance() == null)
-    		throw new IllegalStateException("CommandListener must be registered.");
-    	
     	JavaPlugin plugin = v.getPlugin();
     	PluginCommand cmd = plugin.getCommand(label);
     	

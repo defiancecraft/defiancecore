@@ -11,7 +11,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.UnknownDependencyException;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.defiancecraft.core.command.CommandListener;
 import com.defiancecraft.core.command.CommandRegistry;
 import com.defiancecraft.core.commands.EconomyCommands;
 import com.defiancecraft.core.commands.PermissionCommands;
@@ -108,9 +107,6 @@ public class DefianceCore extends JavaPlugin {
 	
 	private void registerCommands() {
 		
-		// Setup the listener
-		CommandListener.setup(this);
-		
 		// Permission Commands
 		CommandRegistry.registerUniversalCommand(this, "perm", "defiancecraft.perm.*", PermissionCommands::help);
 		CommandRegistry.registerUniversalSubCommand("perm", "help", "defiancecraft.perm.help", PermissionCommands::help);
@@ -185,7 +181,7 @@ public class DefianceCore extends JavaPlugin {
 			
 			// Now attempt to enable the module!
 			getLogger().info(String.format("[Modules] Enabling module '%s'...", module.getCanonicalName()));
-			loader.enablePlugin(modulePlugin);
+			this.getServer().getPluginManager().enablePlugin(modulePlugin);
 			
 		}
 		
