@@ -1,6 +1,11 @@
 package com.defiancecraft.core.command;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -9,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 
-public class CommandListener implements Listener {
+public class CommandListener implements Listener, CommandExecutor {
 
     private static CommandListener listener;
     
@@ -45,6 +50,24 @@ public class CommandListener implements Listener {
         }
     }
     
+    @Override
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+		
+    	VirtualCommand v = CommandRegistry.getCommand(cmd.getName());
+    	if (v != null) {
+    		if (sender instanceof Player && v.hasPlayerExecution())
+    			return v.invokePlayer((Player)sender, args);
+    		else if (sender instanceof ConsoleCommandSender && v.hasConsoleExecution())
+    			return v.invokeConsole(Bukkit.getConsoleSender(), args);
+    	}
+    	
+    	return false;
+    	
+	}
+    
+    static CommandListener getInstance() {
+    	return listener;
+    }
     
     /**
      * Ensure that the virtual command listener has been setup. If it has not,
@@ -61,4 +84,5 @@ public class CommandListener implements Listener {
             Bukkit.getPluginManager().registerEvents(listener, plugin);
         }
     }
+
 }

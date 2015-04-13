@@ -1,13 +1,13 @@
 package com.defiancecraft.core.command;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A Class for representing a VirtualCommand, which is registered from an
@@ -15,21 +15,21 @@ import java.util.Map;
  */
 public class VirtualCommand {
 
-    final Class<? extends JavaPlugin> plugincls;
+    final JavaPlugin plugin;
     final Map<String, VirtualSubCommand> subcommands;
     volatile CommandAction<? super Player> player;
     volatile CommandAction<? super ConsoleCommandSender> console;
     volatile String permission = "";
 
-    VirtualCommand(Class<? extends JavaPlugin> plugincls) {
-        this.plugincls = plugincls;
+    VirtualCommand(JavaPlugin plugin) {
+        this.plugin = plugin;
         this.subcommands = new HashMap<>();
         this.player = null;
         this.console = null;
     }
 
-    VirtualCommand(Class<? extends JavaPlugin> plugincls, String permission) {
-        this(plugincls);
+    VirtualCommand(JavaPlugin plugin, String permission) {
+        this(plugin);
         this.permission = permission;
     }
     
@@ -83,7 +83,7 @@ public class VirtualCommand {
 
     public String toString() {
         return String.format("VirtualCommand{plugin=%s,p exec=%s, c exec=%s}",
-                plugincls.getSimpleName(), hasPlayerExecution(), hasConsoleExecution());
+                plugin.getClass().getSimpleName(), hasPlayerExecution(), hasConsoleExecution());
     }
 
     public boolean hasPlayerExecution() {
@@ -92,6 +92,10 @@ public class VirtualCommand {
 
     public boolean hasConsoleExecution() {
         return console != null;
+    }
+    
+    JavaPlugin getPlugin() {
+    	return this.plugin;
     }
     
     VirtualSubCommand getSubCommand(String sub_label) {

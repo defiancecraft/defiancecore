@@ -1,12 +1,13 @@
 package com.defiancecraft.core.command;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class CommandRegistry {
 
@@ -34,8 +35,8 @@ public class CommandRegistry {
         VirtualCommand v = virtual.get(label);
         
         if (v == null) {
-            v = new VirtualCommand(plugin.getClass());
-            virtual.put(label, v);
+            v = new VirtualCommand(plugin);
+            registerVirtualCommand(label, v);
         }
         
         if (v.hasPlayerExecution()) {
@@ -49,8 +50,8 @@ public class CommandRegistry {
         VirtualCommand v = virtual.get(label);
 
         if (v == null) {
-            v = new VirtualCommand(plugin.getClass(), permission);
-            virtual.put(label, v);
+            v = new VirtualCommand(plugin, permission);
+            registerVirtualCommand(label, v);
         }
 
         if (v.hasPlayerExecution()) {
@@ -64,8 +65,8 @@ public class CommandRegistry {
         VirtualCommand v = virtual.get(label);
 
         if (v == null) {
-            v = new VirtualCommand(plugin.getClass());
-            virtual.put(label, v);
+            v = new VirtualCommand(plugin);
+            registerVirtualCommand(label, v);
         }
 
         if (v.hasConsoleExecution()) {
@@ -162,7 +163,44 @@ public class CommandRegistry {
         s.console = action;
     }
     
+    /**
+     * Registers a VirtualCommand to the Map and to Bukkit, so that
+     * it works nicely with other plugins.
+     * 
+     * @param label Command's label
+     * @param v VirtualCommand to register
+     */
+    private static void registerVirtualCommand(String label, VirtualCommand v) {
+    	
+    	if (CommandListener.getInstance() == null)
+    		throw new IllegalStateException("CommandListener must be registered.");
+    	
+    	JavaPlugin plugin = v.getPlugin();
+    	PluginCommand cmd = plugin.getCommand(label);
+    	
+    	if (cmd == null)
+    		throw new IllegalStateException("Command '" + label + "' is not defined in the plugin.yml file of '" + plugin.getClass().getSimpleName() + "'");
+    	
+    	cmd.setExecutor(CommandListener.getInstance());
+    	virtual.put(label, v);
+    	
+    }
+    
+    /**
+     * Unregisters a VirtualCommand from the Map and Bukkit
+     * @param label Label of VirtualCommand
+     */
     public static void unregisterVirtualCommand(String label) {
+    	VirtualCommand v = virtual.get(label);
+    	if (v == null)
+    		return;
+    	
+    	PluginCommand cmd;
+    	
+    	// Set the CommandExecutor to the default
+    	if ((cmd = v.getPlugin().getCommand(label)) != null) 
+    		cmd.setExecutor(v.getPlugin());
+    	
         virtual.remove(label);
     }
     
