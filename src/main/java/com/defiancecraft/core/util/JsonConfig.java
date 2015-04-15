@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class JsonConfig {
 
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 
     public static <T extends JsonConfig> T load(File file, Class<T> clazz) {
         JsonConfig config;
