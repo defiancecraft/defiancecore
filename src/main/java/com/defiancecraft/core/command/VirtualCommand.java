@@ -58,7 +58,7 @@ public class VirtualCommand {
         
         if (args.length < 1 || (s = getSubCommand(args[0])) == null) {
             if (hasPlayerExecution()) {
-                if (permission.equalsIgnoreCase("") || sender.hasPermission(permission)) {
+                if (permission == null || permission.equalsIgnoreCase("") || sender.hasPermission(permission)) {
                     player.invoke(sender, args);
                 } else {
                     sender.sendMessage(ChatColor.RED + "You do not have permission to use this command!");
@@ -70,7 +70,7 @@ public class VirtualCommand {
         }
         
         if (s.hasPlayerExecution()) {
-            if (s.permission.equalsIgnoreCase("") || sender.hasPermission(s.permission)) {
+            if (s.permission == null || s.permission.equalsIgnoreCase("") || sender.hasPermission(s.permission)) {
                 s.player.invoke(sender, Arrays.copyOfRange(args, 1, args.length));
             } else {
                 sender.sendMessage(ChatColor.RED + "You do not have permission to use this command!");
