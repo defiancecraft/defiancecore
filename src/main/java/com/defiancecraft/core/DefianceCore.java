@@ -1,6 +1,7 @@
 package com.defiancecraft.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import com.defiancecraft.core.modules.ModuleConfig;
 import com.defiancecraft.core.permissions.PermissionManager;
 import com.defiancecraft.core.util.FileUtils;
 import com.defiancecraft.core.util.JsonConfig;
+import com.defiancecraft.core.util.Lang;
 
 public class DefianceCore extends JavaPlugin {
 
@@ -85,6 +87,16 @@ public class DefianceCore extends JavaPlugin {
 		this.registerCommands();
 	
 		/*
+		 * Load language file
+		 */
+		
+		try {
+			Lang.reload();
+		} catch (IOException e) {
+			getLogger().warning("Language file could not be created! A blank file will be used instead.");
+		}
+		
+		/*
 		 * Load modules
 		 */
 		this.loadModules();
@@ -95,6 +107,14 @@ public class DefianceCore extends JavaPlugin {
 
 		// Disable all modules
 		this.unloadModules();
+		
+		// Save language file
+		try {
+			Lang.save();
+		} catch (IOException e) {
+			getLogger().severe("Failed to save language file!");
+			e.printStackTrace();
+		}
 		
 		// Remove all PermissionAttachments
 		if (manager != null)
