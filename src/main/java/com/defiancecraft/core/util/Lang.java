@@ -16,7 +16,7 @@ public class Lang {
 	 */
 	public static void reload() throws IOException {
 		
-		File configFile = FileUtils.getSharedConfig("lang.json");
+		File configFile = FileUtils.getSharedConfig("lang.yml");
 		if (!configFile.exists())
 			configFile.createNewFile();
 		
@@ -29,7 +29,7 @@ public class Lang {
 	 * @throws IOException If the file could not be saved.
 	 */
 	public static void save() throws IOException {
-		config.save(FileUtils.getSharedConfig("lang.json"));
+		config.save(FileUtils.getSharedConfig("lang.yml"));
 	}
 	
 	/**
@@ -83,6 +83,8 @@ public class Lang {
 			}
 		}
 		
+		namespace = namespace.toLowerCase();
+		
 		if (!config.isConfigurationSection(namespace)
 				|| !config.getConfigurationSection(namespace).contains(field))
 			return null;
@@ -114,6 +116,8 @@ public class Lang {
 			}
 		}
 		
+		namespace = namespace.toLowerCase();
+		
 		config.createSection(namespace);
 		config.getConfigurationSection(namespace).set(field, value);
 		
@@ -137,6 +141,8 @@ public class Lang {
 				config = new YamlConfiguration();
 			}
 		}
+		
+		namespace = namespace.toLowerCase();
 		
 		if (!config.isConfigurationSection(namespace))
 			config.createSection(namespace);
