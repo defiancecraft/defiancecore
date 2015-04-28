@@ -36,7 +36,7 @@ public class CommandUtils {
 	 * Convenice method to attempt to send a message to UUID `u`.
 	 * This will work if `u` isn't null, and the player with
 	 * that UUID is online. Colour codes will also be translated
-	 * from ampersands (&). 
+	 * from ampersands (&amp;). 
 	 * 
 	 * @param u UUID of Player - can be null
 	 * @param msg Message to send, can be String.format compatible

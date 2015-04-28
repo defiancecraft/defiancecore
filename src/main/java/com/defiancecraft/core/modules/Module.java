@@ -19,7 +19,7 @@ import com.google.gson.JsonParser;
  * and adds functionality of some sort, rather than acting as
  *  a separate, independent plugin.
  * <br>
- * They are stored in the directory '<shared folder>/modules/'
+ * They are stored in the directory '&lt;shared folder&gt;/modules/'
  * and have the extension '.dc.jar'.
  * <br>
  * Modules currently serve the purpose of allowing for easy

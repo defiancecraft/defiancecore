@@ -40,7 +40,7 @@ public class Lang {
 	 * will be converted to lowercase.
 	 * 
 	 * Color codes in the string will be converted to Minecraft codes from
-	 * ampersands (&s).
+	 * ampersands (&amp;s).
 	 * 
 	 * @param namespace The namespace under which the field is stored; this is
 	 * 					normally the module or plugin's canonical name.
@@ -62,7 +62,7 @@ public class Lang {
 	 * will be converted to lowercase.
 	 * 
 	 * Color codes in the string will be converted to Minecraft codes from
-	 * ampersands (&s), and the subsequent string will be passed to String.format
+	 * ampersands (&amp;s), and the subsequent string will be passed to String.format
 	 * with the given `args`.
 	 * 
 	 * @param namespace The namespace under which the field is stored; this is

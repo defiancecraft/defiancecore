@@ -40,6 +40,8 @@ public class CommandListener implements CommandExecutor {
      * does not act as a listener, but rather a CommandExecutor for more
      * robust command handling. It exists only to preserve backward compatibility;
      * the method itself does nothing.
+     * 
+     * @param plugin The plugin to which to register the events
      */
     @Deprecated
     public static void setup(JavaPlugin plugin) {

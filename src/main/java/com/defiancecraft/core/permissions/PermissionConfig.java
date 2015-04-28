@@ -54,7 +54,7 @@ public class PermissionConfig extends JsonConfig {
 	 * the permissions.json file
 	 * 
 	 * @param ascending Whether it should return results in ascending order
-	 * @return List<Group>
+	 * @return List of groups in order of priority
 	 */
 	public List<Group> getGroupsByPriority(boolean ascending) {
 		

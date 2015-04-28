@@ -210,7 +210,7 @@ public class Document {
 	 * 
 	 * @param field Field to get
 	 * @param def Default value if field is null
-	 * @return List<String>, or `def` on failure
+	 * @return List&lt;String&gt;, or `def` on failure
 	 */
 	protected List<String> getStringList(String field, List<String> def) {
 		
@@ -352,10 +352,10 @@ public class Document {
 	}
 	
 	/**
-	 * Shortcut for {@link #getDBObjectList(String, List<DBObject>)}, with
+	 * Shortcut for {@link #getDBObjectList(String, List)}, with
 	 * default as null.
 	 * 
-	 * @see #getDBObjectList(String, List<DBObject>)
+	 * @see #getDBObjectList(String, List)
 	 */
 	protected List<DBObject> getDBObjectList(String field) {
 		
@@ -368,7 +368,7 @@ public class Document {
 	 * 
 	 * @param field Field to get
 	 * @param def Default value if field is null
-	 * @return List<DBObject>, or `def` on failure
+	 * @return List, or `def` on failure
 	 */
 	protected List<DBObject> getDBObjectList(String field, List<DBObject> def) {
 		

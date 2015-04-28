@@ -115,7 +115,7 @@ public class PermissionManager {
 	/**
 	 * Gets the prefix and suffix of a user
 	 * 
-	 * @param user User to get prefix & suffix of
+	 * @param user User to get prefix &amp; suffix of
 	 * @return Array of two strings: [prefix, suffix]
 	 */
 	private String[] getPrefixAndSuffix(DBUser user) {
@@ -174,7 +174,7 @@ public class PermissionManager {
 	}
 	
 	/**
-	 * Sets a player's metadata (i.e. their prefix & suffix)
+	 * Sets a player's metadata (i.e. their prefix &amp; suffix)
 	 * 
 	 * @param p Player to set metadata of
 	 * @param meta PermissionMetadata object
@@ -213,7 +213,7 @@ public class PermissionManager {
 	 * @param player Player to set permissions of
 	 * @throws MongoException Thrown if a database error occurs
 	 * @deprecated Unless wanting only to update the
-	 * permissions of a player and not metadata, the {@link #updatePlayer(Player)}
+	 * permissions of a player and not metadata, the {@link #updatePlayer(Player, boolean)}
 	 * method should be used instead to avoid multiple DB
 	 * queries.
 	 */
@@ -265,7 +265,7 @@ public class PermissionManager {
 	/**
 	 * Updates a player's metadata, querying the database
 	 * for the user first. Should not be used when, for example,
-	 * a player's rank changes, use {@link #updatePlayer(Player)}
+	 * a player's rank changes, use {@link #updatePlayer(Player, boolean)}
 	 * for that.
 	 * 
 	 * This method should be used, for example, if a player's

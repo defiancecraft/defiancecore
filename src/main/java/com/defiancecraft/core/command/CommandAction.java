@@ -17,6 +17,7 @@ public interface CommandAction<T extends CommandSender> extends BiConsumer<T, St
      *
      * @param sender The sender who ran the command.
      * @param args The arguments passed for the command.
+     * @return Whether the command was valid
      */
     public boolean invoke(T sender, String[] args);
 
@@ -35,6 +36,7 @@ public interface CommandAction<T extends CommandSender> extends BiConsumer<T, St
      *
      * @param sender The sender who ran the command.
      * @param args The arguments passed for the command.
+     * @return Whether the command was valid
      */
     public default boolean test(T sender, String[] args) {
         return invoke(sender, args);

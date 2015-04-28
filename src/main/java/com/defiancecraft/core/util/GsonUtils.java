@@ -10,7 +10,7 @@ import com.google.gson.JsonObject;
 public class GsonUtils {
 
 	/**
-	 * Converts a Map<String, JsonElement> to a JsonObject
+	 * Converts a Map&lt;String, JsonElement&gt; to a JsonObject
 	 * 
 	 * @param map Map to convert
 	 * @return JsonObject
@@ -26,10 +26,10 @@ public class GsonUtils {
 	}
 	
 	/**
-	 * Converts a JsonObject to a Map<String, JsonElement>
+	 * Converts a JsonObject to a Map&lt;String, JsonElement&gt;
 	 * 
 	 * @param obj JsonObject to convert
-	 * @return Map<String, JsonElement>
+	 * @return Map
 	 */
 	public static Map<String, JsonElement> toMap(JsonObject obj) {
 		

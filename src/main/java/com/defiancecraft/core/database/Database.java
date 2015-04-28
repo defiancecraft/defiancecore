@@ -198,7 +198,7 @@ public class Database {
 	 * any necessary indexes.
 	 * 
 	 * @param c The collection instance to register
-	 * @see Database#getCollection(Class<? extends Collection>)
+	 * @see Database#getCollection(Class)
 	 */
 	public static void registerCollection(Collection c) {
 		
