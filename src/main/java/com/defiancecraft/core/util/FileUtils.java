@@ -88,4 +88,36 @@ public class FileUtils {
 		
 	}
 	
+	/**
+	 * Gets a File object for the log directory within the
+	 * shared folder. Modules may log contents to here in
+	 * any format they desire. The only convention is to use
+	 * the file extension .log to indicate that it is a log.
+	 * 
+	 * @return File representing the log directory.
+	 */
+	public static File getLogDirectory() {
+		
+		File dir = new File(getSharedDirectory(), "logs");
+		if (!dir.exists() || !dir.isDirectory())
+			dir.mkdirs();
+		
+		return dir;
+		
+	}
+	
+	/**
+	 * Gets a File object for a log. This method does not
+	 * create the file, as this should be handled by the calling
+	 * class.
+	 * 
+	 * @param name File name without path, i.e. mylog.log
+	 * @return File object
+	 */
+	public static File getLogFile(String name) {
+		
+		return new File(getLogDirectory(), name);
+		
+	}
+	
 }
