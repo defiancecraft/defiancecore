@@ -186,6 +186,7 @@ public class Economy {
 	
 	public static class EconomyConfig extends JsonConfig {
 		
+		public boolean enabled = true;
 		public String currencySingular = "token";
 		public String currencyPlural = "tokens";
 		public String currencySymbol = "T";
