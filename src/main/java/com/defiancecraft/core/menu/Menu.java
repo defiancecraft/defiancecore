@@ -31,11 +31,16 @@ public abstract class Menu implements InventoryHolder {
 	/**
 	 * Creates a menu using the given title, rows, and layout.
 	 * The number of slots is given by `rows * 9`.
-	 * 
-	 * Subclasses should implement {@link #addMenuOptions()}, rather
-	 * than trying to add them in the constructor, as {@link #init()}
-	 * is called in the constructor, and would thus be called before
-	 * any menu options have been added.
+	 * <br><br>
+	 * Note that the Menu must be initialized by calling {@link Menu#init()}
+	 * in order to add the menu options (as per the overriden addMenuOptions).
+	 * This may be done by adding a call to the superclass in the constructor, e.g.
+	 * {@code super.init()}, or by using a Factory pattern and calling the method
+	 * there.
+	 * <br><br>
+	 * It is <b>crucial</b> that the Menu is initialized before use; otherwise, the
+	 * options in the menu will not appear, unless addMenuOptions and rerender are
+	 * explicitly invoked.
 	 * 
 	 * @param title The title to display on the menu
 	 * @param rows Number of rows in the menu
@@ -59,8 +64,6 @@ public abstract class Menu implements InventoryHolder {
 		this.inventory = Bukkit.createInventory(this, rows * 9, title);
 		this.layout = layout;
 		
-		this.init();
-		
 	}
 	
 	@Override
@@ -78,7 +81,7 @@ public abstract class Menu implements InventoryHolder {
 	 * Initializes the menu, calling {@link #addMenuOptions()} in the
 	 * process in order to add any necessary menu options.
 	 */
-	protected void init() {
+	protected final void init() {
 		this.addMenuOptions();
 		this.layout.render(inventory);
 	}
