@@ -145,6 +145,8 @@ public abstract class JavaModule extends JavaPlugin implements Module {
 		if (!moduleConfig.configs.containsKey(getCanonicalName()) || moduleConfig.configs.get(getCanonicalName()).containsKey(MIGRATION_KEY))
 			throw new IllegalStateException("Config is already migrated or does not exist!");
 		
+		Bukkit.getLogger().info(String.format("[Modules] Migrating config for module '%s'...", getCanonicalName()));
+		
 		// Load the config as an instance of 'T' by converting it to a JsonObject from
 		// the Map it is stored as, and getting Gson to parse this.
 		T config = GSON.fromJson(GsonUtils.toJsonObject(moduleConfig.configs.get(getCanonicalName())), clazz);
@@ -228,7 +230,11 @@ public abstract class JavaModule extends JavaPlugin implements Module {
 	 * @throws IOException If the file could not be written to
 	 */
 	protected static <T> void saveJsonConfig(T instance, File file) throws IOException {
-		GSON.toJson(instance, new FileWriter(file));
+		String json = GSON.toJson(instance);
+		FileWriter writer = new FileWriter(file);
+		writer.write(json);
+		writer.flush();
+		writer.close();
 	}
 	
 	/**
@@ -239,7 +245,11 @@ public abstract class JavaModule extends JavaPlugin implements Module {
 	 * @throws IOException If the file could not be written to
 	 */
 	protected static <T> void saveYamlConfig(T instance, File file) throws IOException {
-		YAML.dump(instance, new FileWriter(file));
+		String yml = YAML.dumpAsMap(instance);
+		FileWriter writer = new FileWriter(file);
+		writer.write(yml);
+		writer.flush();
+		writer.close();
 	}
 	
 }
