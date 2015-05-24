@@ -3,8 +3,10 @@ package com.defiancecraft.core.util;
 import java.io.File;
 import java.net.URISyntaxException;
 
-public class FileUtils {
+public final class FileUtils {
 
+	private FileUtils() {}
+	
 	/**
 	 * Gets the JAR file of a class, or 
 	 * returns null if there is an error in
@@ -118,6 +120,34 @@ public class FileUtils {
 		
 		return new File(getLogDirectory(), name);
 		
+	}
+
+	/**
+	 * Gets the directory in which module configs are stored, creating it
+	 * if it does not already exist.
+	 * 
+	 * @return File object representing directory in which module configs are stored.
+	 */
+	public static File getModuleConfigsDirectory() {
+		
+		File dir = new File(getSharedDirectory(), "configs");
+		if (!dir.exists() || !dir.isDirectory())
+			dir.mkdirs();
+		
+		return dir;
+		
+	}
+	
+	/**
+	 * Gets a config for a module from the module configs directory. This config
+	 * can be of any file type, as the file name and extension are specified in the
+	 * `name` parameter.
+	 * 
+	 * @param name Name of the file which represents the module config; should include file extension.
+	 * @return File object
+	 */
+	public static File getModuleConfig(String name) {
+		return new File(getModuleConfigsDirectory(), name);
 	}
 	
 }

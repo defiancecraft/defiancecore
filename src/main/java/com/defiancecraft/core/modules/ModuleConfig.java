@@ -11,6 +11,7 @@ import com.google.gson.JsonElement;
 public class ModuleConfig extends JsonConfig {
 
 	public List<String> enabledModules = new ArrayList<String>();
+	public ConfigFormat configFormat = ConfigFormat.JSON;
 	
 	// Map of strings (module names) to maps of strings to JsonElements (JSON objects)
 	public Map<String, Map<String, JsonElement>> configs = new HashMap<String, Map<String, JsonElement>>();

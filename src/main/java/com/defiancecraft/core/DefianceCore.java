@@ -241,7 +241,10 @@ public class DefianceCore extends JavaPlugin {
 	
 	/**
 	 * Reloads the module config from file.
+	 * 
+	 * @deprecated Modules use their own configuration files now; there should be no need to reload the ModuleConfig.
 	 */
+	@Deprecated
 	public static void reloadModuleConfig() {
 		DefianceCore.moduleConfig = JsonConfig.load(FileUtils.getSharedConfig("modules.json"), ModuleConfig.class);
 	}
