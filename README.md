@@ -6,7 +6,7 @@ This is the core library for DefianceCraft servers, containing features primaril
 
 ## Contents
 - [Modules](#markdown-header-modules)
-    * [Description](#markdown-header-description)
+    * [Description](#markdown-header-description-of-modules)
     * [Enabling/Disabling Modules](#markdown-header-enablingdisabling-modules)
     * [Naming Modules](#markdown-header-naming-modules)
     * [Creating Modules](#markdown-header-creating-modules)
