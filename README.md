@@ -143,10 +143,12 @@ DefianceCore (and all modules **should**) uses Maven for building and compiling.
 
 ## License
 You may:
+
 - Contribute to DefianceCore through pull requests and commits to source
 - Use DefianceCore and associated modules on the designated DefianceCraft-owned servers and on local testing servers
 
 You may not:
+
 - Disclose the source of DefianceCore, modules, or any associated code.
 - Redistribute DefianceCore or module binaries/jars/source code.
 - Use DefianceCore for commercial or personal use outside of DefianceCraft
