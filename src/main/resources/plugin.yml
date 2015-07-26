@@ -1,15 +1,10 @@
 name: DefianceCore
 main: com.defiancecraft.core.DefianceCore
 version: 1.2.0
-softdepend: [Vault]
 commands:
   perm:
-  token:
-  tokenhelp:
-  tokenbal:
-  tokenbalother:
-  tokenredeem:
-  tokenpay:
-  tokentake:
-  tokengive:
-  tokenreset:
+  eco:
+  bal:
+  balother:
+  pay:
+  

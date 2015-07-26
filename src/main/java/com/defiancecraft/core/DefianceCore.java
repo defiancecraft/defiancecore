@@ -9,7 +9,6 @@ import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.UnknownDependencyException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,7 +33,6 @@ public class DefianceCore extends JavaPlugin {
 
 	private static PermissionManager manager;
 	private static ModuleConfig moduleConfig;
-	private static net.milkbowl.vault.economy.Economy vault;
 	
 	// Array of Modules - are all assignable from Module class.
 	private List<Plugin> loadedModules = new ArrayList<Plugin>();
@@ -82,12 +80,6 @@ public class DefianceCore extends JavaPlugin {
 		pm.registerEvents(new PermissionListener(DefianceCore.manager), this);
 		pm.registerEvents(new ChatListener(DefianceCore.manager), this);
 		pm.registerEvents(new PlayerDBUpdateListener(), this);
-		
-		/*
-		 * Setup Vault
-		 */
-		if (Economy.getConfig().enabled)
-			this.setupVault();
 		
 		/*
 		 * Register commands
@@ -154,50 +146,14 @@ public class DefianceCore extends JavaPlugin {
 		
 		// Economy Commands
 		if (Economy.getConfig().enabled) {
-			
-			CommandRegistry.registerUniversalCommand(this, "token", "defiancecraft.eco.*", EconomyCommands::help);
-			CommandRegistry.registerUniversalCommand(this, "tokenhelp", "defiancecraft.eco.*", EconomyCommands::help);
-			
-			CommandRegistry.registerUniversalSubCommand("token", "g", "defiancecraft.eco.give", EconomyCommands::give);
-			CommandRegistry.registerUniversalSubCommand("token", "give", "defiancecraft.eco.give", EconomyCommands::give);
-			CommandRegistry.registerUniversalCommand(this, "tokengive", "defiancecraft.eco.give", EconomyCommands::give);
-			
-			CommandRegistry.registerUniversalSubCommand("token", "t", "defiancecraft.eco.take", EconomyCommands::take);
-			CommandRegistry.registerUniversalSubCommand("token", "take", "defiancecraft.eco.take", EconomyCommands::take);
-			CommandRegistry.registerUniversalCommand(this, "tokentake", "defiancecraft.eco.take", EconomyCommands::take);
-			
-			CommandRegistry.registerUniversalSubCommand("token", "r", "defiancecraft.eco.reset", EconomyCommands::reset);
-			CommandRegistry.registerUniversalSubCommand("token", "reset", "defiancecraft.eco.reset", EconomyCommands::reset);
-			CommandRegistry.registerUniversalCommand(this, "tokenreset", "defiancecraft.eco.reset", EconomyCommands::reset);
-			
-			CommandRegistry.registerPlayerSubCommand("token", "b", "defiancecraft.eco.bal", EconomyCommands::bal);
-			CommandRegistry.registerPlayerSubCommand("token", "bal", "defiancecraft.eco.bal", EconomyCommands::bal);
-			CommandRegistry.registerPlayerCommand(this, "tokenbal", "defiancecraft.eco.bal", EconomyCommands::bal);
-			
-			CommandRegistry.registerPlayerSubCommand("token", "p", "defiancecraft.eco.pay", EconomyCommands::pay);
-			CommandRegistry.registerPlayerSubCommand("token", "pay", "defiancecraft.eco.pay", EconomyCommands::pay);
-			CommandRegistry.registerPlayerCommand(this, "tokenpay", "defiancecraft.eco.pay", EconomyCommands::pay);
-			
-			CommandRegistry.registerUniversalSubCommand("token", "o", "defiancecraft.eco.balother", EconomyCommands::balOther);
-			CommandRegistry.registerUniversalSubCommand("token", "balother", "defiancecraft.eco.balother", EconomyCommands::balOther);
-			CommandRegistry.registerUniversalCommand(this, "tokenbalother", "defiancecraft.eco.balother", EconomyCommands::balOther);
-		
-			CommandRegistry.registerPlayerSubCommand("token", "d", "defiancecraft.eco.redeem", EconomyCommands::redeem);
-			CommandRegistry.registerPlayerSubCommand("token", "redeem", "defiancecraft.eco.redeem", EconomyCommands::redeem);
-			CommandRegistry.registerPlayerCommand(this, "tokenredeem", "defiancecraft.eco.redeem", EconomyCommands::redeem);
-			
+			CommandRegistry.registerUniversalCommand(this, "eco", "defiancecraft.eco.*", EconomyCommands::help);
+			CommandRegistry.registerUniversalSubCommand("eco", "give", "defiancecraft.eco.give", EconomyCommands::give);
+			CommandRegistry.registerUniversalSubCommand("eco", "take", "defiancecraft.eco.take", EconomyCommands::take);
+			CommandRegistry.registerUniversalSubCommand("eco", "reset", "defiancecraft.eco.reset", EconomyCommands::reset);
+			CommandRegistry.registerPlayerCommand(this, "bal", "defiancecraft.eco.bal", EconomyCommands::bal);
+			CommandRegistry.registerPlayerCommand(this, "pay", "defiancecraft.eco.pay", EconomyCommands::pay);
+			CommandRegistry.registerUniversalCommand(this, "balother", "defiancecraft.eco.balother", EconomyCommands::balOther);
 		}
-		
-	}
-	
-	private void setupVault() {
-		
-		if (!getServer().getPluginManager().isPluginEnabled("Vault"))
-			return;
-		
-		RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> rsp = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-		if (rsp != null)
-			DefianceCore.vault = rsp.getProvider();
 		
 	}
 	
@@ -268,16 +224,6 @@ public class DefianceCore extends JavaPlugin {
 		
 		loadedModules.clear();
 		
-	}
-	
-	/**
-	 * Internal method; modules should obtain their own instance
-	 * of Vault.
-	 * 
-	 * @return Vault Economy instance
-	 */
-	public static net.milkbowl.vault.economy.Economy getVault() {
-		return vault;
 	}
 	
 	/**

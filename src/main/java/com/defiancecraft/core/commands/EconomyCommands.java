@@ -7,7 +7,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.defiancecraft.core.DefianceCore;
 import com.defiancecraft.core.api.Economy;
 import com.defiancecraft.core.api.Economy.InsufficientFundsException;
 import com.defiancecraft.core.api.Economy.UserNotFoundException;
@@ -23,14 +22,13 @@ public class EconomyCommands {
 		
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', 
 			"&9&lEconomy Help\n" +
-			"&b- /token\n" +
-			"&b- /token give <user> <amount>\n" +
-			"&b- /token take <user> <amount>\n" +
-			"&b- /token reset <user>\n" +
-			"&b- /token bal\n" +
-			"&b- /token balother <user>\n" +
-			"&b- /token pay <user> <amount>\n" +
-			"&b- /token redeem <amount>"
+			"&b- /eco help\n" +
+			"&b- /eco give <user> <amount>\n" +
+			"&b- /eco take <user> <amount>\n" +
+			"&b- /eco reset <user>\n" +
+			"&b- /bal\n" +
+			"&b- /balother <user>\n" +
+			"&b- /pay <user> <amount>"
 		));
 		
 		return true;
@@ -38,7 +36,7 @@ public class EconomyCommands {
 	}
 	
 	/*
-	 * Command:    /token give <user> <amount>
+	 * Command:    /eco give <user> <amount>
 	 * Permission: defiancecraft.eco.give
 	 */
 	public static boolean give(CommandSender sender, String[] args) {
@@ -46,7 +44,7 @@ public class EconomyCommands {
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME, Argument.DOUBLE);
 
 		if (!parser.isValid()) {
-			sender.sendMessage("Usage: /tokengive <user> <amount>");
+			sender.sendMessage("Usage: /eco give <user> <amount>");
 			return true;
 		}
 		
@@ -68,7 +66,7 @@ public class EconomyCommands {
 	}
 	
 	/*
-	 * Command:    /token take <user> <amount>
+	 * Command:    /eco take <user> <amount>
 	 * Permission: defiancecraft.eco.take
 	 */
 	public static boolean take(CommandSender sender, String[] args) {
@@ -76,7 +74,7 @@ public class EconomyCommands {
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME, Argument.DOUBLE);
 
 		if (!parser.isValid()) {
-			sender.sendMessage("Usage: /tokentake <user> <amount>");
+			sender.sendMessage("Usage: /eco take <user> <amount>");
 			return true;
 		}
 		
@@ -104,7 +102,7 @@ public class EconomyCommands {
 	}
 	
 	/*
-	 * Command:    /token reset <user>
+	 * Command:    /eco reset <user>
 	 * Permission: defiancecraft.eco.reset
 	 */
 	public static boolean reset(CommandSender sender, String[] args) {
@@ -112,7 +110,7 @@ public class EconomyCommands {
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME);
 
 		if (!parser.isValid()) {
-			sender.sendMessage("Usage: /tokenreset <user>");
+			sender.sendMessage("Usage: /eco reset <user>");
 			return true;
 		}
 		
@@ -137,8 +135,8 @@ public class EconomyCommands {
 	}
 	
 	/*
-	 * Command:    /token bal
-	 * Permission: defiancecraft.eco.bal
+	 * Command:    /bal
+	 * Permission: defiancecraft.bal
 	 */
 	public static boolean bal(CommandSender sender, String[] args) {
 		
@@ -157,15 +155,15 @@ public class EconomyCommands {
 	}
 	
 	/*
-	 * Command:    /token balother
-	 * Permission: defiancecraft.eco.balother
+	 * Command:    /balother
+	 * Permission: defiancecraft.balother
 	 */
 	public static boolean balOther(CommandSender sender, String[] args) {
 	
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME);
 		
 		if (!parser.isValid()) {
-			sender.sendMessage("Usage: /tokenbalother <user>");
+			sender.sendMessage("Usage: /balother <user>");
 			return true;
 		}
 		
@@ -190,15 +188,15 @@ public class EconomyCommands {
 	}
 	
 	/*
-	 * Command:    /token pay <user> <amount>
-	 * Permission: defiancecraft.eco.pay
+	 * Command:    /pay <user> <amount>
+	 * Permission: defiancecraft.pay
 	 */
 	public static boolean pay(CommandSender sender, String[] args) {
 		
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME, Argument.DOUBLE);
 		
 		if (!parser.isValid()) {
-			sender.sendMessage("Usage: /tokenpay <user> <amount>");
+			sender.sendMessage("Usage: /pay <user> <amount>");
 			return true;
 		}
 		
@@ -244,51 +242,6 @@ public class EconomyCommands {
 		
 		return true;
 		
-	}
-	
-	/*
-	 * Command:    /token redeem <amount>
-	 * Permission: defiancecraft.eco.redeem
-	 */
-	public static boolean redeem(CommandSender sender, String[] args) {
-		
-		if (!(sender instanceof Player))
-			return false;
-		
-		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.INTEGER);
-		
-		if (!parser.isValid()) {
-			sender.sendMessage("Usage: /token redeem <amount>");
-			return true;
-		} else if (DefianceCore.getVault() == null){
-			sender.sendMessage(ChatColor.RED + "Vault is not enabled on this server.");
-			return true;
-		} else if (DefianceCore.getVault().getName().equalsIgnoreCase("DefianceCore")) {
-			sender.sendMessage(ChatColor.RED + "You cannot redeem on this server.");
-			return true;
-		}
-			
-		final int amount  = parser.getInt(1);
-		final UUID uuid   = ((Player)sender).getUniqueId();
-		final String name = sender.getName();
-		
-		sender.sendMessage(ChatColor.GRAY + "Redeeming " + Economy.format(amount) + "...");
-		
-		Database.getExecutorService().submit(() -> {
-			
-			try {
-				Economy.withdraw(name, amount);
-				DefianceCore.getVault().depositPlayer(Bukkit.getOfflinePlayer(uuid), amount);
-				CommandUtils.trySend(uuid, "&aConverted %s into %s!", false, Economy.format(amount), DefianceCore.getVault().format(amount));
-			} catch (InsufficientFundsException | UserNotFoundException e) {
-				CommandUtils.trySend(uuid, "&cYou do not have enough money.", false);
-			}
-			
-			
-		});
-		
-		return true;
-			
 	}
 	
 }
