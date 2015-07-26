@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
 import com.defiancecraft.core.DefianceCore;
 import com.defiancecraft.core.database.collections.Collection;
@@ -45,7 +46,6 @@ public abstract class JavaModule extends JavaPlugin implements Module {
 		.setPrettyPrinting()
 		.disableHtmlEscaping()
 		.create();
-	private static final Yaml YAML = new Yaml();
 	
 	@Override
 	public Collection[] getCollections() {
@@ -215,7 +215,7 @@ public abstract class JavaModule extends JavaPlugin implements Module {
 		// SnakeYaml does not parse correctly in some situations, and
 		// depends on empty constructors. Thus, it is easier to load it as
 		// and Object, convert to JSON and parse.
-		Object obj = YAML.load(new FileInputStream(file));
+		Object obj = new Yaml(new CustomClassLoaderConstructor(clazz.getClassLoader())).load(new FileInputStream(file));
 		T instance = GSON.fromJson(GSON.toJson(obj), clazz);
 
 		return instance;
@@ -245,7 +245,7 @@ public abstract class JavaModule extends JavaPlugin implements Module {
 	 * @throws IOException If the file could not be written to
 	 */
 	protected static <T> void saveYamlConfig(T instance, File file) throws IOException {
-		String yml = YAML.dumpAsMap(instance);
+		String yml = new Yaml(new CustomClassLoaderConstructor(instance.getClass().getClassLoader())).dumpAsMap(instance);
 		FileWriter writer = new FileWriter(file);
 		writer.write(yml);
 		writer.flush();
