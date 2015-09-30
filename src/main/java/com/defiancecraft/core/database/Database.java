@@ -115,7 +115,7 @@ public class Database {
 		ServerAddress address = new ServerAddress(config.host, config.port);
 		
 		if (config.usesAuth) {
-			MongoCredential credential = MongoCredential.createMongoCRCredential(config.username, config.database, config.password.toCharArray());
+			MongoCredential credential = MongoCredential.createCredential(config.username, config.database, config.password.toCharArray());
 			client = new MongoClient(address, Arrays.asList(credential));
 		} else {
 			client = new MongoClient(address);
