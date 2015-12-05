@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 public class UUIDUtils {
 
 	private static final String URL_UUID = "https://api.mojang.com/users/profiles/minecraft/%s?at=%d";
+	private static final int CONNECT_TIMEOUT = 8000; // Socket connection timeout in milliseconds
 	public static final int DEFAULT_MAX_ATTEMPTS = 5;
 
 	private static long lastAttempt = System.currentTimeMillis();
@@ -98,6 +99,7 @@ public class UUIDUtils {
 			UUIDUtils.lastAttempt = System.currentTimeMillis();
 			HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
+			conn.setConnectTimeout(CONNECT_TIMEOUT);
 			conn.connect();
 			
 			// Check if server responded with anything
