@@ -1,6 +1,6 @@
 name: DefianceCore
 main: com.defiancecraft.core.DefianceCore
-version: 1.2.0
+version: 1.2.1
 commands:
   perm:
   eco:
