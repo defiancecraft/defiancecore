@@ -1,6 +1,9 @@
 package com.defiancecraft.core.commands;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,11 +17,39 @@ import com.defiancecraft.core.api.User;
 import com.defiancecraft.core.command.ArgumentParser;
 import com.defiancecraft.core.command.ArgumentParser.Argument;
 import com.defiancecraft.core.database.Database;
+import com.defiancecraft.core.database.collections.Users;
+import com.defiancecraft.core.database.documents.DBUser;
 import com.defiancecraft.core.util.CommandUtils;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 public class EconomyCommands {
 
-	public static boolean help(CommandSender sender, String[] args) {
+	private static LoadingCache<Integer, List<DBUser>> baltopCache;
+	
+	public EconomyCommands() {
+		 baltopCache = CacheBuilder.newBuilder()
+						.expireAfterWrite(Database.getConfig().baltopCacheSeconds, TimeUnit.SECONDS)
+						.build(new CacheLoader<Integer, List<DBUser>>() {
+
+							@Override
+							public List<DBUser> load(Integer page) throws Exception {
+								int pageMax = Database.getConfig().baltopPageMax;
+								return Database.getCollection(Users.class).findRichestUsers()
+									.skip(page * pageMax)
+									.limit(pageMax)
+									.toArray(pageMax)
+									.stream()
+									.map((u) -> new DBUser(u))
+									.collect(Collectors.toList());
+							}
+							
+						});
+	}
+			
+	
+	public boolean help(CommandSender sender, String[] args) {
 		
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', 
 			"&9&lEconomy Help\n" +
@@ -26,7 +57,7 @@ public class EconomyCommands {
 			"&b- /eco give <user> <amount>\n" +
 			"&b- /eco take <user> <amount>\n" +
 			"&b- /eco reset <user>\n" +
-			"&b- /bal\n" +
+			"&b- /bal [user]\n" +
 			"&b- /balother <user>\n" +
 			"&b- /pay <user> <amount>"
 		));
@@ -39,7 +70,7 @@ public class EconomyCommands {
 	 * Command:    /eco give <user> <amount>
 	 * Permission: defiancecraft.eco.give
 	 */
-	public static boolean give(CommandSender sender, String[] args) {
+	public boolean give(CommandSender sender, String[] args) {
 		
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME, Argument.DOUBLE);
 
@@ -69,7 +100,7 @@ public class EconomyCommands {
 	 * Command:    /eco take <user> <amount>
 	 * Permission: defiancecraft.eco.take
 	 */
-	public static boolean take(CommandSender sender, String[] args) {
+	public boolean take(CommandSender sender, String[] args) {
 		
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME, Argument.DOUBLE);
 
@@ -105,7 +136,7 @@ public class EconomyCommands {
 	 * Command:    /eco reset <user>
 	 * Permission: defiancecraft.eco.reset
 	 */
-	public static boolean reset(CommandSender sender, String[] args) {
+	public boolean reset(CommandSender sender, String[] args) {
 		
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME);
 
@@ -138,15 +169,26 @@ public class EconomyCommands {
 	 * Command:    /bal
 	 * Permission: defiancecraft.bal
 	 */
-	public static boolean bal(CommandSender sender, String[] args) {
+	public boolean bal(CommandSender sender, String[] args) {
 		
 		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
 		final boolean console = !(sender instanceof Player);
+		final String target = args.length > 0 ? args[0] : null;
 		
 		Database.getExecutorService().submit(() -> {
 			
-			double balance = Economy.getBalance(senderUUID);
-			CommandUtils.trySend(senderUUID, "&aBalance: %s", console, Economy.format(balance));
+			if (target == null) {
+				double balance = Economy.getBalance(senderUUID);
+				CommandUtils.trySend(senderUUID, "&aBalance: %s", console, Economy.format(balance));
+			} else {
+				User u = User.findByName(target);
+				
+				// If user does not exist, inform sender
+				if (u == null)
+					CommandUtils.trySend(senderUUID, "&cUser '%s' not found.", console, target);
+				else
+					CommandUtils.trySend(senderUUID, "&aBalance for %s: %s", console, target, Economy.format(u.getDBU().getBalance()));
+			}
 			
 		});
 	
@@ -155,10 +197,101 @@ public class EconomyCommands {
 	}
 	
 	/*
+	 * Command:    /baltop
+	 * Permission: defiancecraft.baltop
+	 */
+	public boolean balTop(CommandSender sender, String[] args) {
+		
+		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console = !(sender instanceof Player);
+		int parsedPage = 0;
+		
+		if (args.length > 0) {
+			try {
+				int pageInt = Integer.parseInt(args[0]);
+				
+				// Ensure valid page
+				if (pageInt <= 0)
+					pageInt = 1;
+				
+				// Subtract 1 (pages start at 0)
+				parsedPage = pageInt - 1;
+			} catch (NumberFormatException e) {}
+		}
+
+		// *sigh*
+		final int finalParsedPage = parsedPage;
+		
+		Database.getExecutorService().submit(() -> {
+			
+			long numUsers = Database.getCollection(Users.class).getNumberOfUsers(); // Number of users to calculate pages
+			
+			// Calculate pages
+			int pageLimit = Database.getConfig().baltopPageMax;	
+			int maxPages  = (int)Math.ceil(numUsers / (double)pageLimit);
+			int page = finalParsedPage;
+
+			// If page exceeds maximum, set to last page
+			if (page >= maxPages)
+				page = maxPages - 1;
+
+			// Create StringBuilder for output message and add title
+			StringBuilder baltopBuilder = new StringBuilder();
+			baltopBuilder.append(
+				Database.getConfig().baltopTitle
+					.replace("{page}", Integer.toString(page + 1))
+					.replace("{pageNext}", Integer.toString(page + 2))
+					.replace("{pageMax}", Integer.toString(maxPages))
+			).append("\n");
+			
+			// Retrieve from cache (or write to cache)
+			List<DBUser> dbUsers;
+			try {
+				dbUsers = baltopCache.get(page);
+			} catch (Exception e) {
+				CommandUtils.trySend(senderUUID, "An error occurred.", console);
+				return;
+			}
+			
+			// Iterate over DBUsers
+			for (int i = 0; i < dbUsers.size(); i++) {
+				DBUser user = dbUsers.get(i);
+				String place = Integer.toString(i + 1 + page * pageLimit); // Find place, factoring in skipped users
+				String name = user.getName(); // Name can be null if player hasn't connected and their name not present
+				
+				// Append row in set format
+				baltopBuilder.append(
+					Database.getConfig().baltopRow
+						.replace("{place}", place)
+						.replace("{balance}", Economy.format(user.getBalance()))
+						.replace("{name}", name == null ? "<unknown>" : name)
+				).append("\n");
+			}
+			
+			// Append footer to builder
+			baltopBuilder.append(
+				Database.getConfig().baltopFooter
+					.replace("{page}", Integer.toString(page + 1))
+					.replace("{pageNext}", Integer.toString(page + 2))
+					.replace("{pageMax}", Integer.toString(maxPages))
+			);
+			
+			// Finally, send message to user
+			CommandUtils.trySend(senderUUID, baltopBuilder.toString(), console);
+			
+		});
+		
+		
+		
+		return true;
+		
+	}
+	
+	/*
 	 * Command:    /balother
 	 * Permission: defiancecraft.balother
 	 */
-	public static boolean balOther(CommandSender sender, String[] args) {
+	public boolean balOther(CommandSender sender, String[] args) {
 	
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME);
 		
@@ -191,7 +324,7 @@ public class EconomyCommands {
 	 * Command:    /pay <user> <amount>
 	 * Permission: defiancecraft.pay
 	 */
-	public static boolean pay(CommandSender sender, String[] args) {
+	public boolean pay(CommandSender sender, String[] args) {
 		
 		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.USERNAME, Argument.DOUBLE);
 		

@@ -50,6 +50,10 @@ public class Database {
 		
 	}
 	
+	public static DatabaseConfig getConfig() {
+		return config;
+	}
+	
 	/**
 	 * Checks whether the database is connected
 	 * @return Whether the database is connected

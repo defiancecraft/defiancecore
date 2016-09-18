@@ -15,4 +15,12 @@ public class DatabaseConfig extends JsonConfig {
 	
 	public boolean usesAuth = false;
 	
+	// The following config options are here because they are semi-relevant, 
+	// and I am a lazy developer (saves creating a new config)
+	public String baltopTitle = "&2&lTop Balances";
+	public String baltopRow = "&a{place}) {name}, {balance}";
+	public String baltopFooter = "&7Page {page}/{pageMax}, type &f/baltop {pageNext}&7 for next page";
+	public int baltopPageMax = 10;
+	public int baltopCacheSeconds = 10;
+	
 }

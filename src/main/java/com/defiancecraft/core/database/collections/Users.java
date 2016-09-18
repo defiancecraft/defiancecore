@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import com.defiancecraft.core.database.Database;
 import com.defiancecraft.core.database.documents.DBUser;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.WriteResult;
@@ -32,6 +33,23 @@ public class Users extends Collection {
 	public DBUser findOne(DBObject query) throws MongoException {
 		DBObject obj = getDBC().findOne(query);
 		return obj == null ? null : new DBUser(obj);
+	}
+	
+	/**
+	 * Finds the richest users of the server and returns a cursor to
+	 * the users sorted (descending) by {@link DBUser#FIELD_BALANCE}.
+	 * 
+	 * @return Cursor for DBObjects of users (construct DBUser to serialize)
+	 */
+	public DBCursor findRichestUsers() {
+		return getDBC()
+			.find()
+			.sort(new BasicDBObject(DBUser.FIELD_BALANCE, -1)); // Descending sort
+	}
+
+	// TODO: doc
+	public long getNumberOfUsers() {
+		return getDBC().count();
 	}
 	
 	/**

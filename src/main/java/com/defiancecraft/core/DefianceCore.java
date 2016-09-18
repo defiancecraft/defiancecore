@@ -146,13 +146,15 @@ public class DefianceCore extends JavaPlugin {
 		
 		// Economy Commands
 		if (Economy.getConfig().enabled) {
-			CommandRegistry.registerUniversalCommand(this, "eco", "defiancecraft.eco.*", EconomyCommands::help);
-			CommandRegistry.registerUniversalSubCommand("eco", "give", "defiancecraft.eco.give", EconomyCommands::give);
-			CommandRegistry.registerUniversalSubCommand("eco", "take", "defiancecraft.eco.take", EconomyCommands::take);
-			CommandRegistry.registerUniversalSubCommand("eco", "reset", "defiancecraft.eco.reset", EconomyCommands::reset);
-			CommandRegistry.registerPlayerCommand(this, "bal", "defiancecraft.eco.bal", EconomyCommands::bal);
-			CommandRegistry.registerPlayerCommand(this, "pay", "defiancecraft.eco.pay", EconomyCommands::pay);
-			CommandRegistry.registerUniversalCommand(this, "balother", "defiancecraft.eco.balother", EconomyCommands::balOther);
+			EconomyCommands eco = new EconomyCommands();
+			CommandRegistry.registerUniversalCommand(this, "eco", "defiancecraft.eco.*", eco::help);
+			CommandRegistry.registerUniversalSubCommand("eco", "give", "defiancecraft.eco.give", eco::give);
+			CommandRegistry.registerUniversalSubCommand("eco", "take", "defiancecraft.eco.take", eco::take);
+			CommandRegistry.registerUniversalSubCommand("eco", "reset", "defiancecraft.eco.reset", eco::reset);
+			CommandRegistry.registerPlayerCommand(this, "bal", "defiancecraft.eco.bal", eco::bal);
+			CommandRegistry.registerPlayerCommand(this, "pay", "defiancecraft.eco.pay", eco::pay);
+			CommandRegistry.registerUniversalCommand(this, "balother", "defiancecraft.eco.balother", eco::balOther);
+			CommandRegistry.registerUniversalCommand(this, "baltop", "defiancecraft.eco.baltop", eco::balTop);
 		}
 		
 	}
