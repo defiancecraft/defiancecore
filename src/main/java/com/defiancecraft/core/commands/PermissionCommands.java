@@ -104,6 +104,65 @@ public class PermissionCommands {
 	}
 	
 	/*
+	 * Command:    /perm uaddgroup <uuid> <group>
+	 * Permission: defiancecraft.perm.addgroup
+	 */
+	public static boolean addGroupUuid(CommandSender sender, String[] args) {
+		
+		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.WORD, Argument.WORD);
+		
+		if (!parser.isValid()) {
+			sender.sendMessage("Usage: /perm uaddgroup <uuid> <group>");
+			return true;
+		}
+		
+		String uuidString = parser.getString(1);
+		final UUID uuid;
+		final String group      = parser.getString(2);
+		final UUID senderUUID   = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console   = !(sender instanceof Player);
+		
+		if (uuidString.isEmpty() || group.isEmpty()) {
+			sender.sendMessage("Usage: /perm uaddgroup <user> <group>");
+			return true;
+		}
+		
+		// Ensure uuidString is valid
+		try {
+			uuid = UUID.fromString(uuidString);
+		} catch (IllegalArgumentException e) {
+			sender.sendMessage(ChatColor.RED + "Invalid UUID");
+			return true;
+		}
+		
+		Database.getExecutorService().submit(() -> {
+			
+			User u = User.findByUUIDOrCreate(uuid, Bukkit.getOfflinePlayer(uuid).getName()/* nullable */);
+			
+			boolean added = u.addGroup(group);
+			if (!added) {
+				CommandUtils.trySend(senderUUID, "&cCould not add group to user; database error", console);
+				return;
+			}
+			
+			// Update player's perms if they are online
+			Player target = Bukkit.getPlayer(u.getDBU().getUUID());
+			PermissionManager pm = DefianceCore.getPermissionManager();
+			
+			if (target != null)
+				pm.updatePlayer(target, true);
+				
+			String userName = u.getDBU().getName();
+			CommandUtils.trySend(senderUUID, "&aSuccessfully added group '%s' to user '%s' (UUID %s).", console, group, userName == null ? "<null>" : userName, uuid.toString());
+			
+		});
+		
+		sender.sendMessage(ChatColor.GRAY + "Adding group...");
+		return true;
+		
+	}
+	
+	/*
 	 * Command:    /perm remgroup <user> <group>
 	 * Permission: defiancecraft.perm.remgroup
 	 */
@@ -143,6 +202,60 @@ public class PermissionCommands {
 				pm.updatePlayer(target, true);
 				
 			CommandUtils.trySend(senderUUID, "&aSuccessfully removed group '%s' from user '%s'.", console, group, user);
+			
+		});
+		
+		sender.sendMessage(ChatColor.GRAY + "Removing group...");
+		return true;
+		
+	}
+	
+	/*
+	 * Command:    /perm uremgroup <uuid> <group>
+	 * Permission: defiancecraft.perm.remgroup
+	 */
+	public static boolean remGroupUuid(CommandSender sender, String[] args) {
+		
+		ArgumentParser parser = new ArgumentParser(String.join(" ", args), Argument.WORD, Argument.WORD);
+		
+		if (!parser.isValid()) {
+			sender.sendMessage("Usage: /perm uremgroup <uuid> <group>");
+			return true;
+		}
+		
+		String uuidString = parser.getString(1);
+		final UUID uuid;
+		final String group = parser.getString(2);
+		final UUID senderUUID = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+		final boolean console = !(sender instanceof Player);
+		
+		// Ensure uuidString is valid
+		try {
+			uuid = UUID.fromString(uuidString);
+		} catch (IllegalArgumentException e) {
+			sender.sendMessage(ChatColor.RED + "Invalid UUID");
+			return true;
+		}
+		
+		Database.getExecutorService().submit(() -> {
+			
+			User u = User.findByUUIDOrCreate(uuid, Bukkit.getOfflinePlayer(uuid).getName()/* nullable */);
+			String name = u.getDBU().getName();
+			
+			boolean success = u.removeGroup(group);
+			if (!success) {
+				CommandUtils.trySend(senderUUID, "&cFailed to remove group '%s' from user '%s'", console, group, name == null ? "<null>" : name);
+				return;
+			}
+			
+			// Update player's perms if they are online
+			Player target = Bukkit.getPlayer(u.getDBU().getUUID());
+			PermissionManager pm = DefianceCore.getPermissionManager();
+			
+			if (target != null)
+				pm.updatePlayer(target, true);
+				
+			CommandUtils.trySend(senderUUID, "&aSuccessfully removed group '%s' from user '%s'.", console, group, name == null ? "<null>" : name);
 			
 		});
 		

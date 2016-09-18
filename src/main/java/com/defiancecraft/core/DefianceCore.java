@@ -133,7 +133,9 @@ public class DefianceCore extends JavaPlugin {
 		CommandRegistry.registerUniversalSubCommand("perm", "help", "defiancecraft.perm.help", PermissionCommands::help);
 		CommandRegistry.registerUniversalSubCommand("perm", "reload", "defiancecraft.perm.reload", PermissionCommands::reload);
 		CommandRegistry.registerUniversalSubCommand("perm", "addgroup", "defiancecraft.perm.addgroup", PermissionCommands::addGroup);
+		CommandRegistry.registerUniversalSubCommand("perm", "uaddgroup", "defiancecraft.perm.addgroup", PermissionCommands::addGroupUuid); // addGroup UUID equivalent
 		CommandRegistry.registerUniversalSubCommand("perm", "remgroup", "defiancecraft.perm.remgroup", PermissionCommands::remGroup);
+		CommandRegistry.registerUniversalSubCommand("perm", "uremgroup", "defiancecraft.perm.remgroup", PermissionCommands::remGroupUuid); // remGroup UUID equivalent
 		CommandRegistry.registerUniversalSubCommand("perm", "setuserprefix", "defiancecraft.perm.setuserprefix", (sender, args) -> PermissionCommands.setUserMeta(sender, args, true));
 		CommandRegistry.registerUniversalSubCommand("perm", "setusersuffix", "defiancecraft.perm.setusersuffix", (sender, args) -> PermissionCommands.setUserMeta(sender, args, false));
 		CommandRegistry.registerUniversalSubCommand("perm", "creategroup", "defiancecraft.perm.creategroup", PermissionCommands::createGroup);
@@ -143,6 +145,7 @@ public class DefianceCore extends JavaPlugin {
 		CommandRegistry.registerUniversalSubCommand("perm", "setgroupsuffix", "defiancecraft.perm.setgroupsuffix", (sender, args) -> PermissionCommands.setGroupMeta(sender, args, false));
 		CommandRegistry.registerUniversalSubCommand("perm", "setpriority", "defiancecraft.perm.setpriority", PermissionCommands::setPriority);
 		CommandRegistry.registerUniversalSubCommand("perm", "groups", "defiancecraft.perm.groups", PermissionCommands::groups);
+		
 		
 		// Economy Commands
 		if (Economy.getConfig().enabled) {
